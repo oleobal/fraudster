@@ -1,13 +1,14 @@
 package fraudster.engine;
 
+import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
 
 // compagnies and taxpayers both are
 public abstract class LegalEntity
 {
-	private String name;
-	private Country residence;
-	private ArrayList<LegalEntity> possessions;
+	protected String name;
+	protected Country residence;
+	protected ArrayList<LegalEntity> possessions;
 
 	public LegalEntity(String theirName, Country whereTheyLive) throws IllegalArgumentException
 	{
@@ -17,7 +18,7 @@ public abstract class LegalEntity
 		this.name=theirName;
 		this.residence = whereTheyLive;
 
-		possessions = new ArrayList<LegalEntity>;
+		possessions = new ArrayList<LegalEntity>();
 	}
 
 
@@ -29,5 +30,10 @@ public abstract class LegalEntity
 	{
 			
 		this.possessions.add(newProperty);
+	}
+	
+	public String toString()
+	{
+		return name+" ("+residence+")";
 	}
 }

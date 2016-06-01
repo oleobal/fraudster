@@ -1,13 +1,18 @@
 package fraudster.engine;
 
+import java.util.ArrayList;
+
 public class Bank extends Company
 {
 	private ArrayList<BankAccount> hostedAccounts;
 
-	public Bank(String banksName)
+	public Bank(String banksName, Country whereTheyAre)
 	{
-		this.name = banksName; //field inherited from LegalEntity
-		hostedAccounts = new ArrayList<BankAccount>;
+		super(banksName, whereTheyAre);
+		//this.name = banksName; //field inherited from LegalEntity
+		//this.residence = whereTheyAre;
+		
+		hostedAccounts = new ArrayList<BankAccount>();
 	}
 	
 	/**

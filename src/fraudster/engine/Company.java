@@ -6,7 +6,8 @@ package fraudster.engine;
  */
 public class Company extends LegalEntity
 {
-	public Company(String n)
-	 super(n);
-
+	public Company(String n, Country c)
+	{
+	 super(n, c);
+	}
 }

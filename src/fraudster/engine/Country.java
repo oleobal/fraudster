@@ -21,7 +21,7 @@ public class Country
 		if (countryName.equals(""))
 			throw new IllegalArgumentException("Empty Country name");
 		this.name = countryName;
-		relations = new Hashtable<Country, Integer>;
+		relations = new Hashtable<Country, Integer>();
 	}
 
 
@@ -34,5 +34,10 @@ public class Country
 	{
 		relations.put(c, i);
 
+	}
+	
+	public String toString()
+	{
+		return name;
 	}
 }
