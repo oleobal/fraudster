@@ -9,6 +9,7 @@ public abstract class LegalEntity
 	protected String name;
 	protected Country residence;
 	protected ArrayList<LegalEntity> possessions;
+	protected ArrayList<BankAccount> accounts;
 
 	public LegalEntity(String theirName, Country whereTheyLive) throws IllegalArgumentException
 	{
@@ -19,6 +20,7 @@ public abstract class LegalEntity
 		this.residence = whereTheyLive;
 
 		possessions = new ArrayList<LegalEntity>();
+		accounts = new ArrayList<BankAccount>();
 	}
 
 
@@ -30,6 +32,15 @@ public abstract class LegalEntity
 	{
 			
 		this.possessions.add(newProperty);
+	}
+	
+	/**
+	 * Fraud, yay !
+	 *
+	 */
+	public void addAccount(BankAccount newAccount)
+	{
+		this.accounts.add(newAccount);
 	}
 	
 	public String toString()

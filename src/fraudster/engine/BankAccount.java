@@ -11,10 +11,26 @@ public class BankAccount
 	private LegalEntity client;
 	private Integer balance;
 
-	public BankAccount(Bank b, LegalEntity l)
+	/**
+	 * Creates a new account hosted at the Bank b, owned by the LegalEntity
+	 *
+	 * If you try making a new BankAccount owned by a Taxpayer, it'll transmit its IllegalStateException
+	 */
+	public BankAccount(Bank b, LegalEntity l) throws IllegalStateException
 	{
-		this.host = b;
+		
 		this.client = l;
+		try
+		{
+			this.client.addAccount(this);
+		}
+		catch (IllegalStateException e)
+		{
+			throw e;
+		}
+		
+		this.host = b;
+		this.host.addHostedAccount(this);
 		this.balance = 0;
 	}
 
@@ -34,5 +50,19 @@ public class BankAccount
 
 		balance+=amount;
 
+	}
+	
+	
+	public LegalEntity getOwner()
+	{
+		return this.client;
+	}
+	
+	public String toString()
+	{
+		return "Account details :\n"+
+				"Owner: "+client+"\n"+
+				"Host: "+host+"\n"+
+				"Balance ($): "+balance;
 	}
 }
