@@ -3,9 +3,12 @@ package fraudster.engine;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * holds list of investigators, suspect transactions and denounciations
+ *
+ * also holds a list of countries it uses to get the system moving
  *
  * also holds the date, in days since the start of the game
  */
@@ -79,7 +82,7 @@ public class Ledger
 	 */
 	public void  nextDay()
 	{
-		
+		Random rand = new Random();
 
 	}
 }

@@ -60,6 +60,63 @@ public class Country
 		relations.put(c, i);
 
 	}
+
+	/**
+	 * returns a random national of the country
+	 * parameter : what type of national
+	 * amongst "company", "bank", "taxpayer", "company-not-bank";
+	 *
+	 * why not generic types or whatnot, I hear you ask
+	 * answer is a mixture of fine-grained control and laziness
+	 */
+	public LegalEntity getRandomNational(String type)
+	{
+		ArrayList<LegalEntity> theOnesWeWant = new ArrayList<LegalEntity>;
+
+		if (type.equals("company"))
+		{
+			for (i:nationals)
+			{
+				if (i instanceof Company)
+				{
+					theOnesWeWant.add(i)
+				}
+			}
+		}
+		if (type.equals("bank"))
+		{
+			for (i:nationals)
+			{
+				if (i instanceof Bank)
+				{
+					theOnesWeWant.add(i)
+				}
+			}
+		}
+		if (type.equals("taxpayer"))
+		{
+			for (i:nationals)
+			{
+				if (i instanceof Taxpayer)
+				{
+					theOnesWeWant.add(i)
+				}
+			}
+		}
+		if (type.equals("company-not-bank"))
+		{
+			for (i:nationals)
+			{
+				if (i instanceof Company && !(i instanceof Bank))
+				{
+					theOnesWeWant.add(i)
+				}
+			}
+		}
+
+		//TODO
+
+	}
 	
 	public String toString()
 	{
