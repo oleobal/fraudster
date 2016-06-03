@@ -3,10 +3,16 @@ package fraudster.engine;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
+import java.lang.IllegalStateException;
 
 public class Country
 {
 	private String name;
+
+	/**
+	 * this country's fraud investigator
+	 */
+	private Investigator investigator;
 	
 	/**
 	 * List of people and companies in this country
@@ -18,19 +24,31 @@ public class Country
 	 */
 	private Hashtable<Country, Integer> relations;
 
+
 	/**
-	 * Are you seriously wondering what this does ?
 	 * Just some values initializations.
 	 */
-	public Country(String countryName) throws IllegalArgumentException
+	public Country(String countryName, Ledger theLedger) throws IllegalArgumentException
 	{
 		if (countryName.equals(""))
 			throw new IllegalArgumentException("Empty Country name");
 		this.name = countryName;
 		relations = new Hashtable<Country, Integer>();
 		nationals = new ArrayList<LegalEntity>();
+
+		theLedger.addCountry(this);
 	}
 
+	/**
+	 * add an investigator to this country
+	 */
+	public void addInvestigator(Investigator i) throws IllegalStateException
+	{
+		if (this.investigator == null)
+			this.investigator = i;
+		else
+			throw new IllegalStateException("Country already has an investigator");
+	}
 
 	/**
 	 * Adds or changes relation level

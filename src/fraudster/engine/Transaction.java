@@ -10,18 +10,18 @@ import java.lang.IllegalArgumentException;
 public class Transaction
 {
 	BankAccount sender, recipient;
-	Integer amount;
+	Integer amount, date;
 	
 	/**
+	 * (important) Don't instanciate transactions directly ; do it from the Ledger's newTransaction method so it can be registered
+	 *
 	 * Will throw :
 	 * IllegalArgumentException if you give it negative amounts to transfer
 	 * IllegalStateException from one of the accounts if they'd object to it (eg it makes their balance negative, for instance)
 	 *
 	 * 'they'd object to it', get it ? haha
 	 */
-	 //TODO all Transactions should be registered in the Ledger
-	 //TODO add a date
-	public Transaction(BankAccount from, BankAccount to, Integer howMuch) throws IllegalStateException, IllegalArgumentException
+	public Transaction(BankAccount from, BankAccount to, Integer howMuch, Integer time) throws IllegalStateException, IllegalArgumentException
 	{
 		if (howMuch<0)
 		{
@@ -48,11 +48,12 @@ public class Transaction
 		}
 		
 		this.amount = howMuch;
+		this.date = date;
 	}
 	
 	public String toString()
 	{
-		return "Transaction\n"+
+		return "Transaction:\n"+
 		       "SENDER "+sender+"\n\n"+
 		       "RECIPIENT "+recipient+"\n\n"+
 			   "AMOUNT ($): "+amount;

@@ -42,4 +42,8 @@ public class Bank extends Company
 			hostedAccounts.add(a);
 	}
 
+	public String toString()
+	{
+		return "Bank -- "+name+" ("+residence+")";
+	}
 }

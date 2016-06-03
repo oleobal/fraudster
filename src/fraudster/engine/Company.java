@@ -10,4 +10,9 @@ public class Company extends LegalEntity
 	{
 	 super(n, c);
 	}
+
+	public String toString()
+	{
+		return "Company -- "+name+" ("+residence+")";
+	}
 }

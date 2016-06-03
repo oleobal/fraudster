@@ -60,7 +60,7 @@ public class BankAccount
 	
 	public String toString()
 	{
-		return "Account details :\n"+
+		return "Account details:\n"+
 				"Owner: "+client+"\n"+
 				"Host: "+host+"\n"+
 				"Balance ($): "+balance;
