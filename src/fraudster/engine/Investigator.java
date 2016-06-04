@@ -34,7 +34,7 @@ public class Investigator extends Taxpayer
 	 */
 	public Investigator(String theirName, Country whereTheyLive) throws IllegalStateException
 	{
-		super(theirName, whereTheyLive);
+		super(theirName, whereTheyLive, 1); // public employees, rich ? Not the tax evasion service, I'm sure.
 		try
 		{
 			residence.addInvestigator(this);

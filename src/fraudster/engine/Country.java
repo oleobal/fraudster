@@ -2,8 +2,12 @@ package fraudster.engine;
 
 import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Random;
+
 import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
+import java.util.NoSuchElementException;
 
 public class Country
 {
@@ -17,25 +21,30 @@ public class Country
 	/**
 	 * List of people and companies in this country
 	 */
-	private ArrayList<LegalEntity> nationals;
+	private CopyOnWriteArrayList<LegalEntity> nationals;
 
 	/**
 	 * let's say we have relations as a number of days added to how much time they take to respond
 	 */
 	private Hashtable<Country, Integer> relations;
 
+	/**
+	 * a reference to the Ledger
+	 */
+	private Ledger theLedger;
 
 	/**
 	 * Just some values initializations.
 	 */
-	public Country(String countryName, Ledger theLedger) throws IllegalArgumentException
+	public Country(String countryName, Ledger mainLedger) throws IllegalArgumentException
 	{
 		if (countryName.equals(""))
 			throw new IllegalArgumentException("Empty Country name");
 		this.name = countryName;
 		relations = new Hashtable<Country, Integer>();
-		nationals = new ArrayList<LegalEntity>();
+		nationals = new CopyOnWriteArrayList<LegalEntity>();
 
+		theLedger = mainLedger;
 		theLedger.addCountry(this);
 	}
 
@@ -48,6 +57,11 @@ public class Country
 			this.investigator = i;
 		else
 			throw new IllegalStateException("Country already has an investigator");
+	}
+	
+	public void addNational(LegalEntity e)
+	{
+		nationals.add(e);
 	}
 
 	/**
@@ -69,53 +83,118 @@ public class Country
 	 * why not generic types or whatnot, I hear you ask
 	 * answer is a mixture of fine-grained control and laziness
 	 */
-	public LegalEntity getRandomNational(String type)
+	
+	// not sure there's a use for this actually
+	public LegalEntity getRandomNational(String type) throws NoSuchElementException
 	{
-		ArrayList<LegalEntity> theOnesWeWant = new ArrayList<LegalEntity>;
+		ArrayList<LegalEntity> theOnesWeWant = new ArrayList<LegalEntity>();
 
 		if (type.equals("company"))
 		{
-			for (i:nationals)
+			for (LegalEntity i:nationals)
 			{
 				if (i instanceof Company)
 				{
-					theOnesWeWant.add(i)
+					theOnesWeWant.add(i);
 				}
 			}
 		}
 		if (type.equals("bank"))
 		{
-			for (i:nationals)
+			for (LegalEntity i:nationals)
 			{
 				if (i instanceof Bank)
 				{
-					theOnesWeWant.add(i)
+					theOnesWeWant.add(i);
 				}
 			}
 		}
 		if (type.equals("taxpayer"))
 		{
-			for (i:nationals)
+			for (LegalEntity i:nationals)
 			{
 				if (i instanceof Taxpayer)
 				{
-					theOnesWeWant.add(i)
+					theOnesWeWant.add(i);
 				}
 			}
 		}
 		if (type.equals("company-not-bank"))
 		{
-			for (i:nationals)
+			for (LegalEntity i:nationals)
 			{
 				if (i instanceof Company && !(i instanceof Bank))
 				{
-					theOnesWeWant.add(i)
+					theOnesWeWant.add(i);
 				}
 			}
 		}
 
-		//TODO
-
+		
+		if (theOnesWeWant.isEmpty())
+			throw new NoSuchElementException("No "+type+" in this country.");
+		
+		return theOnesWeWant.get((new Random()).nextInt(theOnesWeWant.size()));
+	
+	}
+	
+	/**
+	 * queries the ledger and returns a country that is not this one
+	 * this is to model a citizen asking the administration
+	 * no, really, this avoids me having to pass the ledger to every single LegalEntity, by using their country as proxy
+	 *
+	 * @param type : currently ignored
+	 */
+	public Country getOtherCountry(String arg) throws NoSuchElementException//TODO have this argument filter countries, like low tax rate, bad relations, etc.
+	{
+		ArrayList<Country> lol = theLedger.getCountries(); Country i;
+		if (lol.size() == 1)
+			throw new NoSuchElementException("There's only one country : us.");
+		while ((i = lol.get((new Random()).nextInt(lol.size())))  !=  this) //trust me on that one
+			return i; //FIXME: seems like I shouldn't have trusted myself. Looks like it can return itself, which it shouldn't
+		
+		return this; //we'll never get to this, if all goes well :x
+	}
+	
+	/**
+	 * same than with getOtherCountry, passing the ledger to every LegalEntity would be annoying
+	 * but this has an added bonus : this means the state can look at a passing transaction !
+	 *
+	 * it just relays the query to the ledger, and relays back the object and exceptions
+	 */
+	public Transaction newTransaction(BankAccount from, BankAccount to, Integer howMuch) throws IllegalStateException, IllegalArgumentException
+	{
+		try
+		{
+			return theLedger.newTransaction(from, to, howMuch);
+		}
+		catch (RuntimeException e)
+		{
+			throw e;
+		}
+		
+	}
+	
+	/**
+	 * similar to the LegalEntity doBusiness() method, this activates the doBusiness() of every national, and maybe do a little State stuff too
+	 */
+	public void doBusiness()
+	{
+		int k=0;
+		for (LegalEntity i : nationals)
+		{
+			i.doBusiness();
+			k++;
+		}
+		theLedger.log("(country) "+this.toString()+" activated "+k+" nationals");
+	}
+	
+	/**
+	 * relays the message to the ledger's log
+	 */
+	public void log(String message)
+	{
+		theLedger.log(message);
 	}
 	
 	public String toString()

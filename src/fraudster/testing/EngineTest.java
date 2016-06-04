@@ -5,6 +5,10 @@ package fraudster.testing;
 
 import fraudster.engine.*;
 
+import java.util.Scanner;
+
+import java.util.NoSuchElementException;
+
 public class EngineTest
 {
 	
@@ -19,11 +23,12 @@ public class EngineTest
 		france.changeRelations(germany, 1);
 		france.changeRelations(russia, 8);
 		
-		LegalEntity basf = new Company("Baden Anilin und Something Fabrik", germany);
-		Company igFarben = new Company("I.G. Farbenindustrie", germany);
+		LegalEntity basf = new Company("Baden Anilin und Something Fabrik", germany, 3);
+		Company igFarben = new Company("I.G. Farbenindustrie", germany, 4);
 		igFarben.addPossession(basf);
 	
-		Bank evilBank = new Bank("Злой банк", russia);
+		Bank someBank = new Bank("Société Paribas", france, 3); //ambitious merger
+		Bank evilBank = new Bank("Злой банк", russia, 2);
 		
 		BankAccount someAccount = new BankAccount(evilBank, basf);
 		someAccount.changeBalance(9999);
@@ -31,7 +36,7 @@ public class EngineTest
 		System.out.println("==========");
 		System.out.println(someAccount);
 		
-		Bank notAtAllSuspiciousBank = new Bank("Banca del developmento del Mexico Inc.", germany);
+		Bank notAtAllSuspiciousBank = new Bank("Banca del developmento del Mexico Inc.", germany, 2);
 		BankAccount otherAccount = new BankAccount(notAtAllSuspiciousBank, igFarben);
 		
 		System.out.println("==========");
@@ -43,6 +48,42 @@ public class EngineTest
 		System.out.println("==========");
 		Investigator greatGuy = new Investigator(france);
 		System.out.println(greatGuy);
+		
+		System.out.println("==========");
+		Taxpayer richDude = new Taxpayer("Richie McRichface", france, 4);
+		Taxpayer otherRichDude = new Taxpayer("Sigmund Krupp", germany, 4);
+		
+		Scanner sc = new Scanner(System.in);
+		while(true)
+		{
+			theLedger.nextDay();
+			System.out.println("Day "+theLedger.getDay());
+			/*
+			System.out.println("Transactions of the day :");
+			System.out.println("-------------------------");
+			for (Transaction i : theLedger.getTransactions(theLedger.getDay()))
+			{
+				if (i != null)
+					System.out.println(i);
+			}
+			*/
+			System.out.println("Log messages of the day :");
+			System.out.println("-------------------------");
+			try
+			{
+				for (String i : theLedger.getLog(theLedger.getDay()))
+				{
+					System.out.println(i);
+					System.out.println("");
+				}
+					
+			}
+			catch (NoSuchElementException e)
+			{
+				System.out.println("No entries");
+			}
+			sc.nextLine();
+		}
 	}
 
 

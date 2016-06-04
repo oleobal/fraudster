@@ -48,12 +48,18 @@ public class Transaction
 		}
 		
 		this.amount = howMuch;
-		this.date = date;
+		this.date = time;
+	}
+	
+	public int getDate()
+	{
+		return date;
 	}
 	
 	public String toString()
 	{
 		return "Transaction:\n"+
+			   "DATE: "+date+"\n\n"+
 		       "SENDER "+sender+"\n\n"+
 		       "RECIPIENT "+recipient+"\n\n"+
 			   "AMOUNT ($): "+amount;

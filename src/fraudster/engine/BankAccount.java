@@ -52,6 +52,10 @@ public class BankAccount
 
 	}
 	
+	public Bank getBank()
+	{
+		return this.host;
+	}
 	
 	public LegalEntity getOwner()
 	{

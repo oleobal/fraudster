@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
 
+import java.util.NoSuchElementException;
+
 /**
  * holds list of investigators, suspect transactions and denounciations
  *
@@ -32,6 +34,11 @@ public class Ledger
 	ArrayList<Transaction> transactions;
 	ArrayList<Transaction> suspiciousTransactions;
 
+	/**
+	 * logging system for debugging
+	 */
+	 HashMap<Integer, ArrayList<String>> log;
+	
 	//TODO: List of denounciations
 	
 	public Ledger()
@@ -41,7 +48,7 @@ public class Ledger
 		investigators = new HashMap<Country, Investigator>();
 		transactions = new ArrayList<Transaction>();
 		suspiciousTransactions = new ArrayList<Transaction>();
-
+		log = new HashMap<Integer, ArrayList<String>>();
 	}
 
 	/**
@@ -50,6 +57,19 @@ public class Ledger
 	public void addCountry(Country c)
 	{
 		countries.add(c);
+	}
+	
+	/**
+	 * Just a list of all countries. Use with moderation.
+	 */
+	public ArrayList<Country> getCountries() throws NoSuchElementException
+	{
+		if (countries.isEmpty())
+			throw new NoSuchElementException("No countries");
+		// I'm going to go ahead and say there's little chance this warning ever will be relevant
+		@SuppressWarnings("unchecked")
+		ArrayList<Country> lol = (ArrayList<Country>)countries.clone();
+		return lol;
 	}
 
 	//TODO way to flag transactions as suspicious that's not too dumb
@@ -73,6 +93,21 @@ public class Ledger
 
 	}
 
+	/**
+	 * get all transactions for a given day
+	 */
+	public ArrayList<Transaction> getTransactions(Integer date)
+	{
+		ArrayList<Transaction> returnedList = new ArrayList<Transaction>();
+		for (Transaction i : transactions)
+		{
+			if (i.getDate() == date)
+				returnedList.add(i);
+		}
+		
+		return returnedList;
+	}
+	
 	//TODO time (days)
 	/*
 	 * maybe hold a list of all LegalEntities here
@@ -80,9 +115,87 @@ public class Ledger
 	 *
 	 * alternatively we just keep a list of countries and ask them for a bank, a company or a taxpayer
 	 */
+	/**
+	 * This asks the countries to tell their nationals to activate their doBusiness() method.
+	 * and adds 1 day to the days counter, obviously
+	 */
 	public void  nextDay()
 	{
-		Random rand = new Random();
+		date++;
+		for (Country i : countries)
+		{
+			i.doBusiness();
+		}
 
+	}
+
+	/**
+	 * fills the world with random values
+	 * 10 countries, with each 100 taxpayers and 50 compagnies and 1 bank
+	 */
+	public void populate()
+	{
+		String[] countryNames = {"France", "Monaco", "Luxembourg", "Germany", "United Kingdom", "Lichtenstein", "Panama", "Turkey", "Virgin Islands", "United States", "Soviet Union", "People's China", "Italy", "Singapour", "Brazil", "Spain", "Mexico", "Australia", "Canada", "Egypt", "South Africa", "Saudi Arabia", "Switzerland", "Yugoslavia"};
+		
+		String buffer; int rInt;
+		Random rand = new Random();
+		for (int k=0;k<countryNames.length;k++) //Fisher-Yates
+		{
+			rInt = rand.nextInt(countryNames.length);
+			buffer = countryNames[k];
+			countryNames[k] = countryNames[rInt];
+			countryNames[rInt] = buffer;
+			
+		}
+		
+		String[] bankAdj = {"New", "Great", "Development", "Social", "Investment", "General"};
+		
+		Country c ; //for each country, 100 taxpayers and 50 compagnies
+		for (int k=0;k<10;k++)
+		{
+			//TODO tweak numbers ?
+			//TODO set up branches, owners and all
+			c = new Country(countryNames[k], this);
+			for (int i=0; i<100;i++)
+			{
+				new Taxpayer(c);
+			}
+			
+			for (int i=0;i<50;i++)
+			{
+				new Company(c);
+			}
+			
+			//TODO more banks
+			new Bank(bankAdj[rand.nextInt(bankAdj.length)]+" Bank of "+c, c, 3);
+		}
+		
+	}
+	
+	/**
+	 * records in the log
+	 */
+	public void log(String message)
+	{
+		if (log.containsKey(this.date))
+			(log.get(this.date)).add(message);
+		else
+		{
+			log.put(this.date, new ArrayList<String>());
+			(log.get(this.date)).add(message);
+		}
+	}
+	
+	public ArrayList<String> getLog(Integer day) throws NoSuchElementException
+	{
+		if (log.containsKey(day))
+			return log.get(day);
+		else
+			throw new NoSuchElementException("No entry in the ledger for day "+day);
+	}
+	
+	public int getDay()
+	{
+		return this.date;
 	}
 }
