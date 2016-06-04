@@ -35,4 +35,5 @@ public class MainPanel extends JPanel
         super.paintComponent(g);
         g.drawImage(backgroundImage, 0, 0, this);
     }
+	
 }
