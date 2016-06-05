@@ -116,7 +116,7 @@ public class MainGraphical
 			{
 				for (String i : theLedger.getLog(theLedger.getDay()))
 				{
-					result+=i+"\n";
+					result+=i+"\n\n====================\n\n";
 				}
 					
 			}

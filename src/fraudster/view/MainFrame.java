@@ -462,7 +462,7 @@ public class MainFrame extends JFrame implements ActionListener
 	
 	public void debugScreen()
 	{
-		String term = "Log for day "+main.getDay()+"\n---------------\n\n";
+		String term = "Log for day "+main.getDay()+"\n---------------\n";
 		term+=main.getLog(main.getDay());
 		
 		terminal.setText(term);terminal.setCaretPosition(0);

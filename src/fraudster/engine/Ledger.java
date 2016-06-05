@@ -135,7 +135,7 @@ public class Ledger
 	 */
 	public void populate()
 	{
-		String[] countryNames = {"France", "Monaco", "Luxembourg", "Germany", "The United Kingdom", "Lichtenstein", "Panama", "Turkey", "The Virgin Islands", "The United States", "The Soviet Union", "The People's China", "Italy", "Singapour", "Brazil", "Spain", "Mexico", "Australia", "Canada", "Egypt", "South Africa", "Saudi Arabia", "Switzerland", "Yugoslavia"};
+		String[] countryNames = {"France", "Monaco", "Luxembourg", "Germany", "the United Kingdom", "Lichtenstein", "Panama", "Turkey", "the Virgin Islands", "the United States", "the Soviet Union", "the People's China", "Italy", "Singapour", "Brazil", "Spain", "Mexico", "Australia", "Canada", "Egypt", "South Africa", "Saudi Arabia", "Switzerland", "Yugoslavia"};
 		
 		String buffer; int rInt;
 		Random rand = new Random();
