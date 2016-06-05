@@ -1,6 +1,7 @@
 package fraudster.view;
 
 import fraudster.controller.*;
+import fraudster.engine.*;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -9,24 +10,31 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.lang.NumberFormatException;
 
 
 public class MainFrame extends JFrame implements ActionListener
 {
-	MainGraphical main;
-	boolean startUpInProgress; //true if this is the beginning and we're asking the player for a name
+	private MainGraphical main;
+	private boolean[] startUpInProgress = {true, false}; //true if this is the beginning and we're asking the player for a name ; the second one is for the country selection
+	private Player thePlayer;
 	
-	MainPanel contentPanel;
-	JPanel buttons, commandZone;
+	private MainPanel contentPanel;
+	private JPanel buttons, commandZone;
 	
-	JTextArea terminal;
-	JScrollPane scrollTerm;
-	JTextField commandField; JLabel commandLabel;
-	JPanel screen;
-	JButton nextDay, home, mail, embassies, worldInit, help, coffee, debug;
+	private JTextArea terminal;
+	private JScrollPane scrollTerm;
+	private CommandField commandField; JLabel commandLabel;
+	private JPanel screen;
+	private JButton nextDay, home, mail, embassies, worldInit, help, coffee, debug;
 	public MainFrame(String s, MainGraphical m)
 	{
 		super(s);
@@ -75,7 +83,7 @@ public class MainFrame extends JFrame implements ActionListener
 		commandLabel.setPreferredSize(new Dimension(65,20));
 		commandLabel.setFont(new Font("Courier New", Font.BOLD, 14));
 		commandLabel.setForeground(Color.ORANGE);
-		commandField = new JTextField();
+		commandField = new CommandField();
 		commandField.setBackground(Color.BLACK);
 		commandField.setForeground(Color.YELLOW);
 		commandField.setCaretColor(Color.RED);
@@ -176,10 +184,132 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		
 		//homeScreen();
-		startUpInProgress=true;
+		startUpInProgress[0]=true;
 		startUpScreen();
 	}
+
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getSource() == commandField)
+		{
+			if (commandField.getText().equals(""))
+				return;
+			
+			if (startUpInProgress[0]) // name selction
+			{
+				main.setPlayerName(commandField.getText());
+				startUpInProgress[0] = false;
+				startUpInProgress[1] = true ; // I can't help but think this was a grave mistake
+				countrySelectScreen();
+			}
+			else if (startUpInProgress[1]) // country select
+			{
+				
+				try
+				{
+					Integer lol =Integer.parseInt(commandField.getText());
+					if ( lol < commandField.getMin()  || lol > commandField.getMax())
+					{
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number from "+commandField.getMin()+" to "+commandField.getMax()+", please.");
+						commandField.setText("");
+					}
+					
+					else
+					{
+						thePlayer = main.setPlayerCountry(lol);
+						commandField.reset();
+						homeScreen();
+						startUpInProgress[1]=false;
+					}
+					
+				}
+				catch (NumberFormatException exc)
+				{ 
+					terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
+					commandField.setText("");
+				}
+				
+				
+				
+			}
+			
+			else if (commandField.source.equals("countriesScreen")) //I guess that's a bitbetter than random global booleans
+			{
+				try
+				{
+					Integer lol =Integer.parseInt(commandField.getText());
+					if ( lol < commandField.getMin()  || lol > commandField.getMax())
+					{
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number from "+commandField.getMin()+" to "+commandField.getMax()+", please.");
+						commandField.setText("");
+					}
+					
+					else
+					{
+						singleCountryScreen(lol);
+						commandField.reset();
+					}
+					
+				}
+				catch (NumberFormatException exc)
+				{ 
+					terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
+					commandField.setText("");
+				}
+			}
+			
+			
+			commandField.setText("");
+		}
+		
+		if (!startUpInProgress[0] && !startUpInProgress[1])
+		{
+			if (e.getSource() == nextDay)
+			{
+				main.nextDay();
+				logOffScreen();
+			}
+		
+			if (e.getSource() == home)
+			{
+				homeScreen();
+			}
+			
+			if (e.getSource() == mail)
+			{
+			}
+			
+			if (e.getSource() == embassies)
+			{
+				countriesScreen();
+			}
+			
+			if (e.getSource() == help)
+			{
+				helpScreen();
+			}
+			
+			
+			if (e.getSource () == debug)
+			{
+				debugScreen();
+			}
+			
+		}
+	}
 	
+
+	public void logOffScreen() //I guess a dimming effect would be ideal, but..
+	{
+		String term = "This computer has been shut down."+"\n"+
+		              "See you tomorrow !"+"\n\n\n\n\n\n\n\n\n\n"+
+
+					  "(Press any button to turn your terminal back on.)";
+		
+		terminal.setText(term);
+		
+	}
+		
 	public void startUpScreen()
 	{
 		String term = "Welcome in a world where the Pentium II was released fifteen years earlier than in your timeline ; where people are nothing more than amoral numpty meatbags who'll start embezzling money as soon as it hits their pocket."+"\n\n"+
@@ -194,29 +324,110 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setText(term);
 	}
 	
-	public void CountrySelectScreen()
+	public void countrySelectScreen()
 	{ 
+		String result = "";
+		try
+		{
+			ArrayList<Country> countries = main.getCountries();
+			int k=0; result="Please select the country you're working for:\n\n";
+			for (Country i:countries)
+			{
+				result+="["+k+"] "+i+"\n";
+				k++;
+			}
+			result+="\nType the number of your country in the command bar.";
+			commandField.setMax(k-1);
+			commandField.setMin(0);
+			commandField.setNumOnly(true);
+			terminal.setText(result);
+		}
+		catch (NoSuchElementException e)
+		{ result = "No countries"; }
+		
 		
 	}
-	
-	public void actionPerformed(ActionEvent e)
+	public void countriesScreen()
 	{
-		if (e.getSource() == commandField)
+		String result = "";
+		try
 		{
-			if (commandField.getText().equals(""))
-				return;
-			
-			if (startUpInProgress == true)
+			ArrayList<Country> countries = main.getCountries();
+			int k=0; result="Please select the country you wish to learn more about:\n\n";
+			for (Country i:countries)
 			{
-				main.setPlayerName(commandField.getText());
-				startUpInProgress = false;
-				homeScreen();
+				result+="["+k+"] "+i+"\n";
+				k++;
+			}
+			result+="\nType the number of the country in the command bar.";
+			commandField.source = "countriesScreen";
+			commandField.setMax(k-1);
+			commandField.setMin(0);
+			commandField.setNumOnly(true);
+			terminal.setText(result);
+		}
+		catch (NoSuchElementException e)
+		{ result = "No countries"; }
+	}
+	
+	
+	
+	
+	/**
+	 * info about a particular country
+	 */
+	public void singleCountryScreen(Integer c)
+	{
+		String result = "";
+		try
+		{
+			ArrayList<Country> countries = main.getCountries(); Country target = countries.get(c);
+			result += "Country info: "+target+"\n========================================\n\n";
+			result +="Relations:\n---------\n";
+			result +="(In number of additional days to each request from that country. Absent = zero.)\n\n";
+			for (Map.Entry<Country, Integer> entry : target.getRelations().entrySet())
+			{
+				result+=entry.getKey()+" -- "+entry.getValue();
 			}
 			
-			
-			commandField.setText("");
+			commandField.source = "singleCountryScreen";
+			terminal.setText(result);
 		}
+		catch (NoSuchElementException e)
+		{ result = "No countries"; }
 	}
+	
+	
+	
+	
+	
+	
+	public void helpScreen()
+	{
+		String term = "List of buttons :"+"\n"+
+		              "-----------------"+"\n\n"+
+		              "Next day: you log off and go to sleep at home while the game advances by one day."+"\n"+
+					  "Home: nice world map"+"\n"+
+					  "Mail: where you get to consult your e-mail. Answers from queries will arrive here."+"\n"+
+					  "Embassies: allows you to see the list of countries, see statistics and request things from them."+"\n"+
+					  "World Initiative: the WAIFF communicates through this. This is where you can see suspicious transactions and report your findings."+"\n"+
+					  "Help: this."+"\n"+
+					  "Coffee: get a cup of coffee."+"\n"+
+					  "Debug: prints the game log of the day."+"\n\n"+
+					  
+					  "On each screen you can interact through the command bar at the bottom."+"\n\n\n"+
+					  
+					  
+					  "Game mechanics:"+"\n"+
+					  "---------------"+"\n\n"+
+					  "Each Country has nationals that answer to them : compagnies, banks (which are compagnies) and taxpayers."+"\n"+
+					  "Taxpayers have only one account in their name, but when it gets too full they get the urge to fraud. They'll then start asking compagnies they own to embezzle money for them, making them frauding too. They might also create compagnies, if needs be."+"\n"+
+					  "Some might be taking advantage of lower taxes on entreprises, but most of the time the aim is to get their money out of their country."+"\n\n"+
+		              "Fortunately, the WAIFF keeps a list of transactions signaled as suspicious. Using them as a starting point, you'll have to ask around for more information until you can trace money from a (non-)taxpayer's pocket to a foreign compagny.";
+					  
+		terminal.setText(term);terminal.setCaretPosition(0);
+	}
+	
 	
 	public void homeScreen()
 	{
@@ -243,14 +454,17 @@ public class MainFrame extends JFrame implements ActionListener
 				"                    / ,'                                      ~"+"\n"+"    "+
 				"                    ',|  ~";
 		
-		String info = "         Welcome, "+main.getPlayerName()+
+		String info = "         Welcome, "+thePlayer.getName()+" from "+thePlayer.getCountry()+
 		"\n         We are "+main.getTodaysDateLong()+
-		"\n         It has been "+main.getDay()+" days since you've started)";
+		"\n         It has been "+main.getDay()+" days since you've started.";
 		terminal.setText(map+"\n\n"+info); //TODO mail ! yay !
 	}
 	
 	public void debugScreen()
 	{
+		String term = "Log for day "+main.getDay()+"\n---------------\n\n";
+		term+=main.getLog(main.getDay());
 		
+		terminal.setText(term);terminal.setCaretPosition(0);
 	}
 }

@@ -9,8 +9,8 @@ import java.lang.IllegalArgumentException;
  */
 public class Transaction
 {
-	BankAccount sender, recipient;
-	Integer amount, date;
+	private BankAccount sender, recipient;
+	private Integer amount, date;
 	
 	/**
 	 * (important) Don't instanciate transactions directly ; do it from the Ledger's newTransaction method so it can be registered

@@ -7,13 +7,17 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
 public class MainGraphical
 {
-	Ledger theLedger;
-	MainFrame theFrame;
-	Calendar startCal;
+	private Ledger theLedger;
+	private MainFrame theFrame;
+	private Calendar startCal;
 	
-	String playerName;
+	private String playerName; //I have to keep it somewhere while waiting for the country
+	private Player thePlayer;
 	
 	public static void main(String[] args)
 	{
@@ -41,9 +45,21 @@ public class MainGraphical
 	{
 		playerName=p;
 	}
-	public String getPlayerName()
+	/**
+	 * ArrayLists always have the same order, right ? Right ?
+	 * Anyway yes, this is important, because it instanciates our player only then. Use setPlayerName first.
+	 * to be used as the final step in creating the player
+	 * to be completely honest I'm not sure all this was a great idea
+	 */
+	public Player setPlayerCountry(Integer i)
 	{
-		return playerName;
+		thePlayer = new Player(playerName, getCountries().get(i));
+		return thePlayer;
+	}
+	
+	public void nextDay()
+	{
+		theLedger.nextDay();
 	}
 	
 	public Integer getDay()
@@ -88,5 +104,39 @@ public class MainGraphical
 		Calendar newCal = (Calendar) startCal.clone();
 		newCal.add(Calendar.DAY_OF_MONTH, theLedger.getDay());
 		return (new SimpleDateFormat("EEEE, 'the' d 'of' MMMM, yyyy", Locale.US)).format(newCal.getTime());
+	}
+	
+	/**
+	 * Stringified game log for an entire day
+	 */
+	public String getLog(Integer day)
+	{
+		String result = "";
+		try
+			{
+				for (String i : theLedger.getLog(theLedger.getDay()))
+				{
+					result+=i+"\n";
+				}
+					
+			}
+		catch (NoSuchElementException e)
+		{
+			result = "No entries";
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<Country> getCountries()
+	{
+		try
+		{
+			return theLedger.getCountries();
+		}
+		catch (NoSuchElementException e)
+		{
+			throw e;
+		}
 	}
 }

@@ -112,4 +112,9 @@ public abstract class LegalEntity
 	{
 		return name+" ("+residence+")";
 	}
+	
+	public String getName()
+	{
+		return name;
+	}
 }

@@ -19,25 +19,25 @@ public class Ledger
 	/**
 	 * the date, as a number of days since the start of the game
 	 */
-	Integer date;
+	private Integer date;
 	/**
 	 * every country
 	 */
-	ArrayList<Country> countries;
+	private ArrayList<Country> countries;
 	/**
 	 * every investigator
 	 */
-	HashMap<Country, Investigator> investigators;
+	private HashMap<Country, Investigator> investigators;
 	/**
 	 * every transaction
 	 */
-	ArrayList<Transaction> transactions;
-	ArrayList<Transaction> suspiciousTransactions;
+	private ArrayList<Transaction> transactions;
+	private ArrayList<Transaction> suspiciousTransactions;
 
 	/**
 	 * logging system for debugging
 	 */
-	 HashMap<Integer, ArrayList<String>> log;
+	private HashMap<Integer, ArrayList<String>> log;
 	
 	//TODO: List of denounciations
 	
@@ -135,7 +135,7 @@ public class Ledger
 	 */
 	public void populate()
 	{
-		String[] countryNames = {"France", "Monaco", "Luxembourg", "Germany", "United Kingdom", "Lichtenstein", "Panama", "Turkey", "Virgin Islands", "United States", "Soviet Union", "People's China", "Italy", "Singapour", "Brazil", "Spain", "Mexico", "Australia", "Canada", "Egypt", "South Africa", "Saudi Arabia", "Switzerland", "Yugoslavia"};
+		String[] countryNames = {"France", "Monaco", "Luxembourg", "Germany", "The United Kingdom", "Lichtenstein", "Panama", "Turkey", "The Virgin Islands", "The United States", "The Soviet Union", "The People's China", "Italy", "Singapour", "Brazil", "Spain", "Mexico", "Australia", "Canada", "Egypt", "South Africa", "Saudi Arabia", "Switzerland", "Yugoslavia"};
 		
 		String buffer; int rInt;
 		Random rand = new Random();

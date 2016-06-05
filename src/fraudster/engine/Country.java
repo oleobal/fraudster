@@ -189,6 +189,14 @@ public class Country
 		theLedger.log("(country) "+this.toString()+" activated "+k+" nationals");
 	}
 	
+	
+	public Hashtable<Country, Integer> getRelations()
+	{
+		@SuppressWarnings("unchecked")
+		Hashtable<Country, Integer> lol = (Hashtable<Country, Integer>)relations.clone();
+		return lol;
+	}
+	
 	/**
 	 * relays the message to the ledger's log
 	 */
