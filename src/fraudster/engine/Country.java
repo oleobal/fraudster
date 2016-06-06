@@ -8,8 +8,9 @@ import java.util.Random;
 import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 import java.util.NoSuchElementException;
+import java.io.Serializable;
 
-public class Country
+public class Country implements Serializable
 {
 	private String name;
 

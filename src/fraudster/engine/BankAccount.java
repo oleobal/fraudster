@@ -2,10 +2,11 @@ package fraudster.engine;
 
 import java.lang.IllegalStateException;
 
+import java.io.Serializable;
 /**
  * links a Bank and a LegalEntity
  */
-public class BankAccount
+public class BankAccount implements java.io.Serializable
 {
 	private Bank host;
 	private LegalEntity client;

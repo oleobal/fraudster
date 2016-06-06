@@ -3,8 +3,10 @@ package fraudster.engine;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
 
+import java.io.Serializable;
+
 // compagnies and taxpayers both are
-public abstract class LegalEntity
+public abstract class LegalEntity implements Serializable
 {
 	protected String name;
 	protected Country residence;

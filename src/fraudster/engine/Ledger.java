@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 
 /**
@@ -14,7 +15,7 @@ import java.util.NoSuchElementException;
  *
  * also holds the date, in days since the start of the game
  */
-public class Ledger
+public class Ledger implements Serializable
 {
 	/**
 	 * the date, as a number of days since the start of the game

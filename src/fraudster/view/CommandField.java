@@ -8,9 +8,10 @@ import javax.swing.*;
  */
 public class CommandField extends JTextField
 {
-	private Integer minVal, maxVal;
-	private Boolean numbersOnly;
-	public String source;
+	public Integer minVal, maxVal;
+	public Boolean numbersOnly;
+	public String source="";
+	public Object storage; // I finally gave up on pretending I know what I'm doing
 	
 	public CommandField()
 	{
@@ -43,7 +44,8 @@ public class CommandField extends JTextField
 	 */
 	public void reset()
 	{
-		source=null;
+		storage=null;
+		source=""; //else nullpointer and all..
 		minVal = maxVal = null;
 		numbersOnly = false;
 	}

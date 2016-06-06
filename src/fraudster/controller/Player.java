@@ -2,10 +2,12 @@ package fraudster.controller;
 
 import fraudster.engine.*;
 
+import java.io.Serializable;
+
 /**
  * wraps around an investigator
  */
-public class Player
+public class Player implements Serializable
 {
 	String name;
 	

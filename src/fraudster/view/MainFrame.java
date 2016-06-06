@@ -24,7 +24,7 @@ import java.lang.NumberFormatException;
 public class MainFrame extends JFrame implements ActionListener
 {
 	private MainGraphical main;
-	private boolean[] startUpInProgress = {true, false}; //true if this is the beginning and we're asking the player for a name ; the second one is for the country selection
+	private Boolean gameLocked; //whether side buttons should be locked
 	private Player thePlayer;
 	
 	private MainPanel contentPanel;
@@ -35,10 +35,16 @@ public class MainFrame extends JFrame implements ActionListener
 	private CommandField commandField; JLabel commandLabel;
 	private JPanel screen;
 	private JButton nextDay, home, mail, embassies, worldInit, help, coffee, debug;
-	public MainFrame(String s, MainGraphical m)
+	
+	/**
+	 * Not ready for gaming until it has recieved a reference to its MainGraphical !
+	 * Until then it's just for loading savegames
+	 */
+	public MainFrame(String s)
 	{
 		super(s);
-		main = m;
+		//main = m;
+		// now done in a particular function
 		this.setPreferredSize(new Dimension(1066, 625));
 		this.setResizable(false);
 		this.setLocation(200,200);
@@ -184,8 +190,9 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		
 		//homeScreen();
-		startUpInProgress[0]=true;
-		startUpScreen();
+		gameLocked=true;
+		//startUpScreen();
+		logOnScreen();
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -195,14 +202,14 @@ public class MainFrame extends JFrame implements ActionListener
 			if (commandField.getText().equals(""))
 				return;
 			
-			if (startUpInProgress[0]) // name selction
+			if (commandField.source=="startUpScreen") // name selction
 			{
 				main.setPlayerName(commandField.getText());
-				startUpInProgress[0] = false;
-				startUpInProgress[1] = true ; // I can't help but think this was a grave mistake
+				commandField.reset();
 				countrySelectScreen();
+				
 			}
-			else if (startUpInProgress[1]) // country select
+			else if (commandField.source=="countrySelectScreen") // country select
 			{
 				
 				try
@@ -218,8 +225,8 @@ public class MainFrame extends JFrame implements ActionListener
 					{
 						thePlayer = main.setPlayerCountry(lol);
 						commandField.reset();
+						gameLocked=false;
 						homeScreen();
-						startUpInProgress[1]=false;
 					}
 					
 				}
@@ -258,11 +265,63 @@ public class MainFrame extends JFrame implements ActionListener
 				}
 			}
 			
+			else if (commandField.source.equals("logOnScreen")) //new game / load 
+			{
+				if (commandField.getText().equals("new")) //new game
+					{
+						main = new MainGraphical(this);
+						commandField.reset();
+						startUpScreen();
+					}
+				else  //load a save file..
+				{
+					try
+					{
+						Integer lol =Integer.parseInt(commandField.getText());
+						if ( lol < commandField.getMin()  || lol > commandField.getMax())
+						{
+							terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number from "+commandField.getMin()+" to "+commandField.getMax()+", please.");
+							commandField.setText("");
+						}
+						
+						else // ..successfully
+						{
+							//let's just hope this won't end terribly
+							//this whole "let's store public things onto commandField" thing isn't completely set up for success
+							@SuppressWarnings("unchecked")
+							String file = ((ArrayList<String>)(commandField.storage)).get(lol);
+							main = MainGraphical.loadGame(file);
+							if (main == null)
+							{
+								JOptionPane.showMessageDialog(this,
+								"Could not read save file !",
+								"No save file",
+								JOptionPane.ERROR_MESSAGE);
+								
+								System.exit(-1); //gawd
+							}
+							thePlayer = main.getPlayer();;//FIXME : nullpointerexception here for some reason
+							
+							commandField.reset();
+							gameLocked=false;
+							homeScreen();
+						}
+						
+					}
+					catch (NumberFormatException exc)
+					{ 
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number or \"new\", please.");
+						commandField.setText("");
+					}
+				}
+				
+			}
+			
 			
 			commandField.setText("");
 		}
 		
-		if (!startUpInProgress[0] && !startUpInProgress[1])
+		if (!gameLocked)
 		{
 			if (e.getSource() == nextDay)
 			{
@@ -289,6 +348,10 @@ public class MainFrame extends JFrame implements ActionListener
 				helpScreen();
 			}
 			
+			if (e.getSource() == coffee)
+			{
+				coffeeScreen();
+			}
 			
 			if (e.getSource () == debug)
 			{
@@ -298,32 +361,75 @@ public class MainFrame extends JFrame implements ActionListener
 		}
 	}
 	
+	/**
+	 * Whether you want to load a saved game or start a new game
+	 */
+	public void logOnScreen()
+	{
+		String term = "Hello ! Do you wish to start a new quest for self-fulfillment or just to load an existing profile ?\n\n\n\n"+
+					"There is a command bar at the bottom of the screen :\n"+
+		            "input \"new\" for a new game, or the number of a saved game file to load it ;\n"+
+					"then, confirm by pressing the Enter key.\n\n"+
+					"Here is the list of save files I've found:\n\n";
+					
+		ArrayList<String> fileNames = MainGraphical.getSaveNames();
+		int k=0;
+		if (fileNames.isEmpty())
+				term+="[no savefiles found]\n";
+		else
+		{
+			for (String i : fileNames)
+			{
+				term+="["+k+"] "+i+"\n";
+				k++;
+			}
+		}
+		terminal.setText(term);
+		commandField.requestFocus();
+		commandField.minVal = 0;
+		commandField.maxVal = k-1;
+		commandField.source="logOnScreen";
+		commandField.storage=fileNames;
+	}
 
+	/**
+	 * transition between days
+	 */
 	public void logOffScreen() //I guess a dimming effect would be ideal, but..
 	{
 		String term = "This computer has been shut down."+"\n"+
-		              "See you tomorrow !"+"\n\n\n\n\n\n\n\n\n\n"+
+		              "See you tomorrow ! It'll be day "+main.getDay()+".\n\n\n\n\n\n\n\n\n\n"+
 
+					  "(your game has been saved as autosave)\n\n"+
 					  "(Press any button to turn your terminal back on.)";
 		
+		main.saveGame();
 		terminal.setText(term);
 		
 	}
 		
+	/**
+	 * (new game) presentation, input your name
+	 */
 	public void startUpScreen()
 	{
 		String term = "Welcome in a world where the Pentium II was released fifteen years earlier than in your timeline ; where people are nothing more than amoral numpty meatbags who'll start embezzling money as soon as it hits their pocket."+"\n\n"+
 					  "Fortunately, in this world the world governements also have established a global project to end fraud, using the latest technologies. The project was called.. X-COM. Unfortunately, you're not too qualified, so they've put you into the crowdsourced sister project. So without further ado:"+"\n\n"+
 					  "Welcome to the W.I.A.F.F. !"+"\n\n"+
-					  "The World Initiative Against Financial Fraud is, well, that. Thanks to your provided terminal, you will be able to get mission orders and track down suspects. As a motivational tool, you will be given a hefty reward for each successful mission."+"\n\n"+
+					  "The World Initiative Against Financial Fraud is, well, that. It's a alliance of states, with each providing a nigh-specialist to operate in their name. Thanks to your provided workstation, you will be able to get mission orders and track down suspects. As a motivational tool, you will be given a hefty reward for each successful mission."+"\n\n"+
 		              "          Signed : Col. John Matrix"+"\n\n\n\n"+
 					  
 					  "The W.I.A.F.F. Terminal uses an intuitive interface. In the future, please refer to the Help button for learning more."+"\n\n"+
 					  "To begin, please enter your name in the command bar, at the bottom of the screen. Confirm by pressing enter.";
 		
 		terminal.setText(term);
+		commandField.requestFocus();
+		commandField.source="startUpScreen";
 	}
 	
+	/**
+	 * (new game) select your country
+	 */
 	public void countrySelectScreen()
 	{ 
 		String result = "";
@@ -331,15 +437,18 @@ public class MainFrame extends JFrame implements ActionListener
 		{
 			ArrayList<Country> countries = main.getCountries();
 			int k=0; result="Please select the country you're working for:\n\n";
+			
 			for (Country i:countries)
 			{
 				result+="["+k+"] "+i+"\n";
 				k++;
 			}
 			result+="\nType the number of your country in the command bar.";
+			commandField.requestFocus();
 			commandField.setMax(k-1);
 			commandField.setMin(0);
 			commandField.setNumOnly(true);
+			commandField.source="countrySelectScreen";
 			terminal.setText(result);
 		}
 		catch (NoSuchElementException e)
@@ -398,10 +507,9 @@ public class MainFrame extends JFrame implements ActionListener
 	}
 	
 	
-	
-	
-	
-	
+	/**
+	 * just some static help
+	 */
 	public void helpScreen()
 	{
 		String term = "List of buttons :"+"\n"+
@@ -428,7 +536,9 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setText(term);terminal.setCaretPosition(0);
 	}
 	
-	
+	/**
+	 * some status info
+	 */
 	public void homeScreen()
 	{
 		String map ="       WELCOME ON YOUR WORLD INITIATIVE AGAINST FINANCIAL FRAUD TERMINAL\n"+"    "+
@@ -460,6 +570,42 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setText(map+"\n\n"+info); //TODO mail ! yay !
 	}
 	
+	/**
+	 * credits. Maybe put in the save function here too
+	 */
+	public void coffeeScreen()
+	{
+		String term = ""+
+		"                                  ("+"\n"+
+		"                                    )     ("+"\n"+
+		"                             ___...(-------)-....___"+"\n"+
+		"                         .-\"\"       )    (          \"\"-."+"\n"+
+		"                   .-'``'|-._             )         _.-|"+"\n"+
+		"                  /  .--.|   `\"\"---...........---\"\"`   |"+"\n"+
+		"                 /  /    |                             |"+"\n"+
+		"                 |  |    |                             |"+"\n"+
+		"                  \\  \\   |                             |"+"\n"+
+		"                   `\\ `\\ |                             |"+"\n"+
+		"                     `\\ `|                             |"+"\n"+
+		"                     _/ /\\                             /"+"\n"+
+		"                    (__/  \\                           /"+"\n"+
+		"                 _..---\"\"` \\                         /`\"\"---.._"+"\n"+
+		"              .-'           \\                       /          '-."+"\n"+
+		"             :               `-.__             __.-'              :"+"\n"+
+		"             :                  ) \"\"---...---\"\" (                 :"+"\n"+
+		"              '._               `\"--...___...--\"`              _.'"+"\n"+
+		"                \\\"\"--..__                              __..--\"\"/"+"\n"+
+		"                 '._     \"\"\"----.....______.....----\"\"\"     _.'"+"\n"+
+		"                    `\"\"--..,,_____            _____,,..--\"\"`"+"\n"+
+		"                                  `\"\"\"----\"\"\"`"+"\n\n\n"+
+		"Your coffee is being delivered. Meanwhile, thank our intern developer:\nOlivier L\u00E9obal";
+		
+		terminal.setText(term);
+	}
+	
+	/**
+	 * prints out the day's log
+	 */
 	public void debugScreen()
 	{
 		String term = "Log for day "+main.getDay()+"\n---------------\n";

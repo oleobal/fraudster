@@ -4,10 +4,12 @@ package fraudster.engine;
 import java.lang.IllegalStateException;
 import java.lang.IllegalArgumentException;
 
+import java.io.Serializable;
+
 /**
  * Transfer of money between two accounts
  */
-public class Transaction
+public class Transaction implements java.io.Serializable
 {
 	private BankAccount sender, recipient;
 	private Integer amount, date;
