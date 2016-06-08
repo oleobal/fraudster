@@ -36,6 +36,7 @@ public class MainFrame extends JFrame implements ActionListener
 	private JPanel screen;
 	private JButton nextDay, home, mail, embassies, worldInit, help, coffee, debug;
 	
+	private Font fontIBM;
 	/**
 	 * Not ready for gaming until it has recieved a reference to its MainGraphical !
 	 * Until then it's just for loading savegames
@@ -53,6 +54,16 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		contentPanel.setLayout(new BorderLayout());
 		
+		try
+		{
+			fontIBM = Font.createFont(Font.TRUETYPE_FONT, (new File("../assets/nouveau-ibm.ttf")));
+			(GraphicsEnvironment.getLocalGraphicsEnvironment()).registerFont(fontIBM);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fontIBM = new Font("Courier New", Font.BOLD, 14);
+		}
 		
 		/*
 		JLabel spacer = new JLabel(" ");
@@ -69,7 +80,8 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setBackground(Color.BLACK);
 		terminal.setForeground(Color.GREEN);
 		terminal.setCaretColor(Color.GREEN);
-		terminal.setFont(new Font("Courier New", Font.BOLD, 14));
+		//terminal.setFont(new Font("Courier New", Font.BOLD, 14));
+		terminal.setFont(fontIBM.deriveFont(14f));
 		terminal.setEditable(false);
 		terminal.setLineWrap(true);
 		
@@ -87,13 +99,13 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		commandLabel = new JLabel("command>");
 		commandLabel.setPreferredSize(new Dimension(65,20));
-		commandLabel.setFont(new Font("Courier New", Font.BOLD, 14));
+		commandLabel.setFont(fontIBM.deriveFont(14f));
 		commandLabel.setForeground(Color.ORANGE);
 		commandField = new CommandField();
 		commandField.setBackground(Color.BLACK);
 		commandField.setForeground(Color.YELLOW);
 		commandField.setCaretColor(Color.RED);
-		commandField.setFont(new Font("Courier New", Font.BOLD, 14));
+		commandField.setFont(fontIBM.deriveFont(14f));
 		commandField.setPreferredSize(new Dimension(545, 20));
 		commandField.setBorder(new EmptyBorder(0,0,0,0));
 		commandField.addActionListener(this);
