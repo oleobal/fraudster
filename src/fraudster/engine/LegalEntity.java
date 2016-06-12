@@ -30,6 +30,14 @@ public abstract class LegalEntity implements Serializable
 	protected ArrayList<BankAccount> accounts;
 
 	/**
+	 * records the days at which someone was convicted (fine() method)
+	 * 
+	 * just for flavour, really
+	 */
+	protected ArrayList<Integer> criminalRecord;
+	
+	
+	/**
 	 * Should not be used
 	 * name = "N/A";
 	 * residence to new UNREGISTERED country called "N/A"
@@ -58,6 +66,7 @@ public abstract class LegalEntity implements Serializable
 		accounts = new ArrayList<BankAccount>();
 		
 		frauding = false; //everyone starts good, I hear. From Genevan fugitives, at least.
+		criminalRecord=new ArrayList<Integer>();
 		
 		if (howRichTheyAre<0)
 			scale=0;
@@ -110,6 +119,27 @@ public abstract class LegalEntity implements Serializable
 		return residence;
 	}
 	
+	public boolean isFrauding()
+	{
+		return frauding;
+	}
+	
+	/**
+	 * causes the pal to stop frauding and tell his possessions to stop as well
+	 * 
+	 * doesn't actually cause loss of money. What'd this be, communism ?
+	 */
+	public void fine(Integer day)
+	{
+		if (frauding)
+		{
+			frauding = false;
+			criminalRecord.add(day);
+			for (LegalEntity i : possessions)
+				fine(day);
+		}
+	}
+	
 	public String toString()
 	{
 		return name+" ("+residence+")";
@@ -118,5 +148,12 @@ public abstract class LegalEntity implements Serializable
 	public String getName()
 	{
 		return name;
+	}
+	
+	public ArrayList<LegalEntity> getPossessions()
+	{
+		@SuppressWarnings("unchecked")
+		ArrayList<LegalEntity> lol = (ArrayList<LegalEntity>)possessions.clone();
+		return lol;
 	}
 }

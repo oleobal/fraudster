@@ -81,7 +81,7 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setForeground(Color.GREEN);
 		terminal.setCaretColor(Color.GREEN);
 		//terminal.setFont(new Font("Courier New", Font.BOLD, 14));
-		terminal.setFont(fontIBM.deriveFont(14f));
+		terminal.setFont(fontIBM.deriveFont(15f));
 		terminal.setEditable(false);
 		terminal.setLineWrap(true);
 		
@@ -99,13 +99,13 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		commandLabel = new JLabel("command>");
 		commandLabel.setPreferredSize(new Dimension(65,20));
-		commandLabel.setFont(fontIBM.deriveFont(14f));
+		commandLabel.setFont(fontIBM.deriveFont(15f));
 		commandLabel.setForeground(Color.ORANGE);
 		commandField = new CommandField();
 		commandField.setBackground(Color.BLACK);
 		commandField.setForeground(Color.YELLOW);
 		commandField.setCaretColor(Color.RED);
-		commandField.setFont(fontIBM.deriveFont(14f));
+		commandField.setFont(fontIBM.deriveFont(15f));
 		commandField.setPreferredSize(new Dimension(545, 20));
 		commandField.setBorder(new EmptyBorder(0,0,0,0));
 		commandField.addActionListener(this);
@@ -263,6 +263,42 @@ public class MainFrame extends JFrame implements ActionListener
 						commandField.setText("");
 					}
 					
+					else if (lol == 0) //suspicious transactions
+					{
+						//TODO
+						commandField.reset();
+					}
+					else if (lol == 1) //past cases
+					{
+						//TODO
+						commandField.reset();
+					}
+					else if (lol == 2) //new denounciation
+					{
+						//TODO
+						commandField.reset();
+					}
+					
+				}
+				catch (NumberFormatException exc)
+				{ 
+					terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
+					commandField.setText("");
+				}
+			}
+			
+			
+			else if (commandField.source.equals("waiffScreen"))
+			{
+				try
+				{
+					Integer lol =Integer.parseInt(commandField.getText());
+					if ( lol < commandField.getMin()  || lol > commandField.getMax())
+					{
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number from "+commandField.getMin()+" to "+commandField.getMax()+", please.");
+						commandField.setText("");
+					}
+					
 					else
 					{
 						singleCountryScreen(lol);
@@ -275,6 +311,7 @@ public class MainFrame extends JFrame implements ActionListener
 					terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
 					commandField.setText("");
 				}
+				
 			}
 			
 			else if (commandField.source.equals("logOnScreen")) //new game / load 
@@ -355,6 +392,11 @@ public class MainFrame extends JFrame implements ActionListener
 				countriesScreen();
 			}
 			
+			if (e.getSource() == worldInit)
+			{
+				waiffScreen();
+			}
+			
 			if (e.getSource() == help)
 			{
 				helpScreen();
@@ -413,7 +455,7 @@ public class MainFrame extends JFrame implements ActionListener
 		              "See you tomorrow ! It'll be day "+main.getDay()+".\n\n\n\n\n\n\n\n\n\n"+
 
 					  "(your game has been saved as autosave)\n\n"+
-					  "(Press any button to turn your terminal back on.)";
+					  "(You've turned your computer off and gone home for the day. Press any button to turn your terminal back on.)";
 		
 		main.saveGame();
 		terminal.setText(term);
@@ -518,6 +560,38 @@ public class MainFrame extends JFrame implements ActionListener
 		{ result = "No countries"; }
 	}
 	
+	/**
+	 * From there you can :
+	 * see your status
+	 * get a list of suspect transactions
+	 * make a denunciation
+	 */
+	public void waiffScreen()
+	{
+		String result =""+ //yes I know, it was WIAFF in the intro
+		"                    _  _  _  _  _______  _______  _______ "+"\n"+
+		"                   (_)(_)(_)| |(_______)(_______)(_______)"+"\n"+
+		"                    _  _  _ | | _______  _____    _____   "+"\n"+
+		"                   | || || || ||  ___  ||  ___)  |  ___)  "+"\n"+
+		"                   | || || || || |   | || |      | |      "+"\n"+
+		"                    \\_____/ |_||_|   |_||_|      |_|      "+"\n\n"+
+                                       
+		"Welcome to the access point for agents of the World Initiative Against Financial Fraud.\n\nType into your command bar :"+"\n\n"+ //TODO status
+		"[0] for a list of suspicous transactions"+"\n"+
+		"[1] for a list of past and current cases"+"\n"+
+		"[2] for new claims concerning unsolved transactions";
+		terminal.setText(result);
+		commandField.source="waiffScreen";
+		commandField.minVal = 0;
+		commandField.maxVal = 2;
+	}
+	
+	public void waiffTransactionsScreen()
+	{
+		
+		
+	}
+	
 	
 	/**
 	 * just some static help
@@ -580,6 +654,7 @@ public class MainFrame extends JFrame implements ActionListener
 		"\n         We are "+main.getTodaysDateLong()+
 		"\n         It has been "+main.getDay()+" days since you've started.";
 		terminal.setText(map+"\n\n"+info); //TODO mail ! yay !
+		commandField.reset(); //just in case..
 	}
 	
 	/**
