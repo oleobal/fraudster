@@ -252,7 +252,7 @@ public class MainFrame extends JFrame implements ActionListener
 				
 			}
 			
-			else if (commandField.source.equals("countriesScreen")) //I guess that's a bitbetter than random global booleans
+			else if (commandField.source.equals("wiaffScreen"))
 			{
 				try
 				{
@@ -288,7 +288,7 @@ public class MainFrame extends JFrame implements ActionListener
 			}
 			
 			
-			else if (commandField.source.equals("waiffScreen"))
+			else if (commandField.source.equals("countriesScreen"))
 			{
 				try
 				{
@@ -394,7 +394,7 @@ public class MainFrame extends JFrame implements ActionListener
 			
 			if (e.getSource() == worldInit)
 			{
-				waiffScreen();
+				wiaffScreen();
 			}
 			
 			if (e.getSource() == help)
@@ -546,7 +546,7 @@ public class MainFrame extends JFrame implements ActionListener
 		{
 			ArrayList<Country> countries = main.getCountries(); Country target = countries.get(c);
 			result += "Country info: "+target+"\n========================================\n\n";
-			result +="Relations:\n---------\n";
+			result +="Relations:\n----------\n";
 			result +="(In number of additional days to each request from that country. Absent = zero.)\n\n";
 			for (Map.Entry<Country, Integer> entry : target.getRelations().entrySet())
 			{
@@ -566,7 +566,7 @@ public class MainFrame extends JFrame implements ActionListener
 	 * get a list of suspect transactions
 	 * make a denunciation
 	 */
-	public void waiffScreen()
+	public void wiaffScreen()
 	{
 		String result =""+ //yes I know, it was WIAFF in the intro
 		"                    _  _  _  _  _______  _______  _______ "+"\n"+
@@ -576,12 +576,12 @@ public class MainFrame extends JFrame implements ActionListener
 		"                   | || || || || |   | || |      | |      "+"\n"+
 		"                    \\_____/ |_||_|   |_||_|      |_|      "+"\n\n"+
                                        
-		"Welcome to the access point for agents of the World Initiative Against Financial Fraud.\n\nType into your command bar :"+"\n\n"+ //TODO status
+		"Welcome to the access point for agents of the World Initiative Against Financial Fraud.\n\nType into your command bar :"+"\n\n\n"+ //TODO status
 		"[0] for a list of suspicous transactions"+"\n"+
 		"[1] for a list of past and current cases"+"\n"+
 		"[2] for new claims concerning unsolved transactions";
 		terminal.setText(result);
-		commandField.source="waiffScreen";
+		commandField.source="wiaffScreen";
 		commandField.minVal = 0;
 		commandField.maxVal = 2;
 	}
