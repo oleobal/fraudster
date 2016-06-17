@@ -149,6 +149,11 @@ public abstract class LegalEntity implements Serializable
 	{
 		return name;
 	}
+
+	public int getScale()
+	{
+		return this.scale;
+	}
 	
 	public ArrayList<LegalEntity> getPossessions()
 	{

@@ -2,5 +2,8 @@
 
 
 defaulttarget :
-	javac engine/*.java \
-	javac testing/*.java
+	javac fraudster/engine/*.java      \
+	      fraudster/testing/*.java     \
+		  fraudster/controller/*.java  \
+		  fraudster/view/*.java
+

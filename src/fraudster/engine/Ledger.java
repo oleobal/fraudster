@@ -149,6 +149,8 @@ public class Ledger implements Serializable
 			
 		}
 		
+
+
 		String[] bankAdj = {"New", "Great", "Development", "Social", "Investment", "General"};
 		
 		Country c ; //for each country, 100 taxpayers and 50 compagnies
@@ -157,12 +159,12 @@ public class Ledger implements Serializable
 			//TODO tweak numbers ?
 			//TODO set up branches, owners and all
 			c = new Country(countryNames[k], this);
-			for (int i=0; i<100;i++)
+			for (int i=0; i<80+rand.nextInt(60);i++)
 			{
 				new Taxpayer(c);
 			}
 			
-			for (int i=0;i<50;i++)
+			for (int i=0;i<20+rand.nextInt(60);i++)
 			{
 				new Company(c);
 			}
@@ -171,6 +173,42 @@ public class Ledger implements Serializable
 			new Bank(bankAdj[rand.nextInt(bankAdj.length)]+" Bank of "+c, c, 3);
 		}
 		
+		// making some rich people own companies
+		LegalEntity t, co1;
+		for (Country ct : countries)
+		{
+			for (int i=0; i<50;i++)
+			{
+				t = ct.getRandomNational("rich-taxpayer");
+				co1 = ct.getRandomNational("company-not-bank");
+				t.addPossession(co1);
+			//FIXME: si on ajoute un champ possedePar, faudra taper ici
+			}
+		}
+
+		// making some rich compagnies own compagnies
+		LegalEntity co2;
+		for (Country ct : countries)
+		{
+			for (int i=0; i<50;i++)
+			{
+				co1 = ct.getRandomNational("rich-company");
+				co2 = ct.getRandomNational("company-not-bank");
+				co1.addPossession(co2);
+			}
+		}
+		
+
+		//relations between countries
+		// TODO: make this more reasonable (one day)
+		int c0,c1;
+		for (int i=0;i<100;i++)
+		{
+			c0 = rand.nextInt(countries.size());c1 = rand.nextInt(countries.size());
+			if (c0==c1)
+				continue;
+			countries.get(c0).changeRelations(countries.get(c1), 1+rand.nextInt(7));
+		}
 	}
 	
 	/**

@@ -108,6 +108,15 @@ public class Company extends LegalEntity
 	
 	public String toString()
 	{
-		return "Company -- "+name+" ("+residence+")";
+		if (scale == 0)
+			return "Company -- "+name+" ("+residence+") (small)";
+		else if (scale == 1)
+			return "Company -- "+name+" ("+residence+") (medium)";
+		else if (scale == 2)
+			return "Company -- "+name+" ("+residence+") (large)";
+		else if (scale == 3)
+			return "Company -- "+name+" ("+residence+") (corporation)";
+		else
+			return "Company -- "+name+" ("+residence+")";
 	}
 }

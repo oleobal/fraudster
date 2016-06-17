@@ -138,9 +138,21 @@ public class Taxpayer extends LegalEntity
 
 	public String toString()
 	{
+		String result = "Taxpayer -- "+name+" ("+residence+")";
+		if (scale == 0)
+			result+=" (poor, ";
+		else if (scale == 1)
+			result+=" (well-off, ";
+		else if (scale == 2)
+			result+=" (rich, ";
+		else if (scale == 3)
+			result+=" (very rich, ";
+		
 		if (accounts.isEmpty())
-			return "Taxpayer -- "+name+" ("+residence+") (no account)";
+			result+="no account)";
 		else
-			return "Taxpayer -- "+name+" ("+residence+") ("+accounts.get(0).getBalance()+" $ in main account)";
+			result+=accounts.get(0).getBalance()+" $ in main account)";
+		
+		return result;
 	}
 }

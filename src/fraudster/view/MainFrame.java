@@ -93,7 +93,14 @@ public class MainFrame extends JFrame implements ActionListener
 		screen = new JPanel();
 		screen.setLayout(new BorderLayout());
 		screen.setPreferredSize(new Dimension(630,500));
-		screen.setBorder(new EmptyBorder(45,65,50,20));
+		// OS-specific code, yay !
+		// FIXME: totally a hack
+		// not all that important, though, because it just screws with the display
+		//System.err.println(System.getProperty("os.name"));
+		if (System.getProperty("os.name").equals("Linux"))
+			screen.setBorder(new EmptyBorder(45,65,68,25));	
+		else
+			screen.setBorder(new EmptyBorder(45,65,50,20));	
 		screen.setOpaque(false);
 		screen.add(scrollTerm, BorderLayout.CENTER);
 		
@@ -550,7 +557,14 @@ public class MainFrame extends JFrame implements ActionListener
 			result +="(In number of additional days to each request from that country. Absent = zero.)\n\n";
 			for (Map.Entry<Country, Integer> entry : target.getRelations().entrySet())
 			{
-				result+=entry.getKey()+" -- "+entry.getValue();
+				result+=entry.getKey()+" -- "+entry.getValue()+"\n";
+			}
+			
+			result +="\n\n\nCompanies:\n----------\n";
+			for (Company co : target.getCompanies())
+			{
+				result+=co+"\n";
+				
 			}
 			
 			commandField.source = "singleCountryScreen";
@@ -568,7 +582,7 @@ public class MainFrame extends JFrame implements ActionListener
 	 */
 	public void wiaffScreen()
 	{
-		String result =""+ //yes I know, it was WIAFF in the intro
+		String result =""+ 
 		"                    _  _  _  _  _______  _______  _______ "+"\n"+
 		"                   (_)(_)(_)| |(_______)(_______)(_______)"+"\n"+
 		"                    _  _  _ | | _______  _____    _____   "+"\n"+
@@ -576,7 +590,7 @@ public class MainFrame extends JFrame implements ActionListener
 		"                   | || || || || |   | || |      | |      "+"\n"+
 		"                    \\_____/ |_||_|   |_||_|      |_|      "+"\n\n"+
                                        
-		"Welcome to the access point for agents of the World Initiative Against Financial Fraud.\n\nType into your command bar :"+"\n\n\n"+ //TODO status
+		"Welcome to the access point for agents of the World Initiative Against Financial Fraud.\n\n\nType into your command bar :"+"\n\n"+ //TODO status
 		"[0] for a list of suspicous transactions"+"\n"+
 		"[1] for a list of past and current cases"+"\n"+
 		"[2] for new claims concerning unsolved transactions";
@@ -685,7 +699,7 @@ public class MainFrame extends JFrame implements ActionListener
 		"                 '._     \"\"\"----.....______.....----\"\"\"     _.'"+"\n"+
 		"                    `\"\"--..,,_____            _____,,..--\"\"`"+"\n"+
 		"                                  `\"\"\"----\"\"\"`"+"\n\n\n"+
-		"Your coffee is being delivered. Meanwhile, thank our intern developer:\nOlivier L\u00E9obal";
+		"Your request for coffee has been relayed to the W.I.A.F.F. Central Coffee Service. Please wait until your request is fulfilled (estimated: "+(7+(new Random()).nextInt(14))+" days).\nMeanwhile, thank our intern developer: Olivier L\u00E9obal."; //TODO add a word for teachers and free software activists
 		
 		terminal.setText(term);
 	}

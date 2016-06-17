@@ -79,7 +79,7 @@ public class Country implements Serializable
 	/**
 	 * returns a random national of the country
 	 * parameter : what type of national
-	 * amongst "company", "bank", "taxpayer", "company-not-bank";
+	 * amongst "company", "rich-company", "bank", "taxpayer", "rich-taxpayer", "company-not-bank", "rich-company-not-bank";
 	 *
 	 * why not generic types or whatnot, I hear you ask
 	 * answer is a mixture of fine-grained control and laziness
@@ -97,6 +97,17 @@ public class Country implements Serializable
 				if (i instanceof Company)
 				{
 					theOnesWeWant.add(i);
+				}
+			}
+		}
+		if (type.equals("rich-company"))
+		{
+			for (LegalEntity i:nationals)
+			{
+				if (i instanceof Company)
+				{
+					if (i.getScale() == 3)
+						theOnesWeWant.add(i);
 				}
 			}
 		}
@@ -120,6 +131,18 @@ public class Country implements Serializable
 				}
 			}
 		}
+		if (type.equals("rich-taxpayer"))
+		{
+			for (LegalEntity i:nationals)
+			{
+				if (i instanceof Taxpayer)
+				{
+					if (i.getScale() == 3)
+						theOnesWeWant.add(i);
+				}
+			}
+		}
+
 		if (type.equals("company-not-bank"))
 		{
 			for (LegalEntity i:nationals)
@@ -131,6 +154,17 @@ public class Country implements Serializable
 			}
 		}
 
+		if (type.equals("rich-company-not-bank"))
+		{
+			for (LegalEntity i:nationals)
+			{
+				if (i instanceof Company && !(i instanceof Bank))
+				{
+					if (i.getScale() == 3)
+						theOnesWeWant.add(i);
+				}
+			}
+		}
 		
 		if (theOnesWeWant.isEmpty())
 			throw new NoSuchElementException("No "+type+" in this country.");
@@ -198,6 +232,26 @@ public class Country implements Serializable
 		return lol;
 	}
 	
+	/**
+	 * ArrayList with all compagnies in the realm
+	 */
+	public ArrayList<Company> getCompanies()
+	{
+		ArrayList<Company> comps = new ArrayList<Company>();
+		Company lol;
+		for (LegalEntity i:nationals)
+		{
+			if (i instanceof Company)
+			{
+				//@SuppressWarnings("unchecked")
+				lol = (Company)i;
+				comps.add(lol);
+			}
+		}
+
+		return comps;
+	}
+
 	/**
 	 * relays the message to the ledger's log
 	 */
