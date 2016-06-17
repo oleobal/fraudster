@@ -115,7 +115,7 @@ public class Company extends LegalEntity
 		else if (scale == 2)
 			return "Company -- "+name+" ("+residence+") (large)";
 		else if (scale == 3)
-			return "Company -- "+name+" ("+residence+") (corporation)";
+			return "Company -- "+name+" ("+residence+") (trust)";
 		else
 			return "Company -- "+name+" ("+residence+")";
 	}

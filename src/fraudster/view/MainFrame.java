@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import java.util.Random;
 import java.util.ArrayList;
@@ -28,13 +29,13 @@ public class MainFrame extends JFrame implements ActionListener
 	private Player thePlayer;
 	
 	private MainPanel contentPanel;
-	private JPanel buttons, commandZone;
+	private JPanel rightPanel, rightUpButtons, buttons, commandZone;
 	
 	private JTextArea terminal;
 	private JScrollPane scrollTerm;
 	private CommandField commandField; JLabel commandLabel;
 	private JPanel screen;
-	private JButton nextDay, home, mail, embassies, worldInit, help, coffee, debug;
+	private KeyboardButton nextDay, home, mail, embassies, worldInit, help, coffee, debug;
 	
 	private Font fontIBM;
 	/**
@@ -65,6 +66,9 @@ public class MainFrame extends JFrame implements ActionListener
 			fontIBM = new Font("Courier New", Font.BOLD, 14);
 		}
 		
+		
+		
+		
 		/*
 		JLabel spacer = new JLabel(" ");
 		spacer.setPreferredSize(new Dimension(70,50));
@@ -85,14 +89,40 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setEditable(false);
 		terminal.setLineWrap(true);
 		
+		
+		/*
+		ScrollBar.background
+		ScrollBar.foreground
+		ScrollBar.thumb
+		ScrollBar.thumbDarkShadow
+		ScrollBar.thumbHighlight
+		ScrollBar.thumbShadow
+		ScrollBar.track
+		ScrollBar.trackHighlight
+		ScrollPane.background
+		ScrollPane.foreground
+		*/
+		
+		UIManager.put("ScrollBar.thumb", Color.GREEN.darker());
+		UIManager.put("ScrollBar.thumbDarkShadow", Color.BLACK);
+		UIManager.put("ScrollBar.thumbHighlight", Color.GREEN.darker());
+		UIManager.put("ScrollBar.thumbShadow", Color.GREEN.darker());
+		UIManager.put("ScrollBar.track", Color.BLACK);
+		UIManager.put("ScrollBar.trackHighlight", Color.GREEN.darker());
+		
 		scrollTerm = new JScrollPane(terminal);
 		scrollTerm.setPreferredSize(new Dimension(630,450));
 		scrollTerm.setBorder(new EmptyBorder(0,0,0,0));
 		scrollTerm.setOpaque(false);
+		scrollTerm.getVerticalScrollBar().setUI(new BasicScrollBarUI()); //else the UIManager defaults won't be used
+		scrollTerm.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
 		
+		
+		
+	
 		screen = new JPanel();
 		screen.setLayout(new BorderLayout());
-		screen.setPreferredSize(new Dimension(630,500));
+		screen.setPreferredSize(new Dimension(630,550));
 		// OS-specific code, yay !
 		// FIXME: totally a hack
 		// not all that important, though, because it just screws with the display
@@ -100,7 +130,7 @@ public class MainFrame extends JFrame implements ActionListener
 		if (System.getProperty("os.name").equals("Linux"))
 			screen.setBorder(new EmptyBorder(45,65,68,25));	
 		else
-			screen.setBorder(new EmptyBorder(45,65,50,20));	
+			screen.setBorder(new EmptyBorder(45,65,50,8));	
 		screen.setOpaque(false);
 		screen.add(scrollTerm, BorderLayout.CENTER);
 		
@@ -124,84 +154,65 @@ public class MainFrame extends JFrame implements ActionListener
 		screen.add(commandZone, BorderLayout.PAGE_END);
 		contentPanel.add(screen, BorderLayout.CENTER);
 		
+		rightPanel = new JPanel();
+		rightPanel.setBorder(new EmptyBorder(20,17,130,16));
+		rightPanel.setPreferredSize(new Dimension(340, 540));
+		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+		rightPanel.setOpaque(false);
+		
+		int buttonX = 150, buttonY = 90 ;
+		
+		rightUpButtons = new JPanel();
+		rightUpButtons.setOpaque(false);
+		rightPanel.add(rightUpButtons);
+		
+			nextDay = new KeyboardButton("next-day");
+			nextDay.addActionListener(this);
+		rightUpButtons.add(nextDay);
+		
+		rightPanel.add(Box.createRigidArea(new Dimension(340,10)));
 		
 		buttons = new JPanel();
-		buttons.setPreferredSize(new Dimension(330, 550));
-		buttons.setBorder(new EmptyBorder(20,20,120,20));
+		rightPanel.add(buttons);
+		
 		buttons.setLayout(new GridLayout(0,2));
+		buttons.setBorder(new EmptyBorder(0,0,150,0));
+		buttons.setPreferredSize(new Dimension(340, 400));
 		buttons.setOpaque(false);
-			int buttonX = 150, buttonY = 90 ;
 			
-			nextDay = new JButton();
-			try
-			{ nextDay.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-next-day.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
-			nextDay.addActionListener(this);
-			buttons.add(nextDay);
-			buttons.add(new JLabel(""));buttons.add(new JLabel(""));buttons.add(new JLabel(""));
-			
-			home = new JButton();
-			try
-			{ home.setIcon(new ImageIcon((ImageIO.read(new File("../assets/button-home.png"))).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			home = new KeyboardButton("home");
 			home.addActionListener(this);
 			buttons.add(home);
 			
 			
 			
-			mail = new JButton();
-			try
-			{ mail.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-mail.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			mail = new KeyboardButton("mail");
 			mail.addActionListener(this);
 			buttons.add(mail);
 			
-			
-			embassies = new JButton();
-			try
-			{ embassies.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-embassies.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			embassies = new KeyboardButton("embassies");
 			embassies.addActionListener(this);
 			buttons.add(embassies);
 			
-			worldInit = new JButton();
-			try
-			{ worldInit.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-world-init.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			worldInit = new KeyboardButton("world-init");
 			worldInit.addActionListener(this);
 			buttons.add(worldInit);
 			
 			
-			help = new JButton();
-			try
-			{ help.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-help.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			help = new KeyboardButton("help");
 			help.addActionListener(this);
 			buttons.add(help);
 			
-			coffee = new JButton();
-			try
-			{ coffee.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-coffee.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			coffee = new KeyboardButton("coffee");
 			coffee.addActionListener(this);
 			buttons.add(coffee);
 			
-			debug = new JButton();
-			try
-			{ debug.setIcon(new ImageIcon(ImageIO.read(new File("../assets/button-debug.png")).getScaledInstance(buttonX, buttonY, Image.SCALE_SMOOTH))); }
-			catch (IOException e)
-			{ System.err.println("Couldn't open button images"); }
+			debug = new KeyboardButton("debug");
 			debug.addActionListener(this);
 			buttons.add(debug);
 			
-		contentPanel.add(buttons, BorderLayout.LINE_END);
+		
+		contentPanel.add(rightPanel, BorderLayout.LINE_END);
 		
 		
 		this.pack();
@@ -459,10 +470,13 @@ public class MainFrame extends JFrame implements ActionListener
 	public void logOffScreen() //I guess a dimming effect would be ideal, but..
 	{
 		String term = "This computer has been shut down."+"\n"+
-		              "See you tomorrow ! It'll be day "+main.getDay()+".\n\n\n\n\n\n\n\n\n\n"+
+		              "See you tomorrow ! It'll be day "+main.getDay()+".\n\n\n\n\n\n\n\n\n\n\n\n"+
 
 					  "(your game has been saved as autosave)\n\n"+
-					  "(You've turned your computer off and gone home for the day. Press any button to turn your terminal back on.)";
+					  "(You've turned your computer off and gone home for the day. Press any button to turn your terminal back on.)\n";
+		
+		              //"Here is what happened while you were gone:\n------------------------------------------\n";
+		              //TODO new suspicous companies : "A new company, ..... Rumor has it the owner is foreign"
 		
 		main.saveGame();
 		terminal.setText(term);
@@ -523,18 +537,19 @@ public class MainFrame extends JFrame implements ActionListener
 		try
 		{
 			ArrayList<Country> countries = main.getCountries();
-			int k=0; result="Please select the country you wish to learn more about:\n\n";
+			int k=0; result="Please select the country you wish to learn more about (and/or contact):\n\n";
 			for (Country i:countries)
 			{
 				result+="["+k+"] "+i+"\n";
 				k++;
 			}
 			result+="\nType the number of the country in the command bar.";
+			commandField.requestFocus();
 			commandField.source = "countriesScreen";
 			commandField.setMax(k-1);
 			commandField.setMin(0);
 			commandField.setNumOnly(true);
-			terminal.setText(result);
+			terminal.setText(result);terminal.setCaretPosition(0);
 		}
 		catch (NoSuchElementException e)
 		{ result = "No countries"; }
@@ -561,6 +576,7 @@ public class MainFrame extends JFrame implements ActionListener
 			}
 			
 			result +="\n\n\nCompanies:\n----------\n";
+			result +="(sizes, smallest to largest: small, medium, large, trust)\n\n";
 			for (Company co : target.getCompanies())
 			{
 				result+=co+"\n";
@@ -568,7 +584,7 @@ public class MainFrame extends JFrame implements ActionListener
 			}
 			
 			commandField.source = "singleCountryScreen";
-			terminal.setText(result);
+			terminal.setText(result);terminal.setCaretPosition(0);
 		}
 		catch (NoSuchElementException e)
 		{ result = "No countries"; }

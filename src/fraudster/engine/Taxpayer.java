@@ -111,8 +111,12 @@ public class Taxpayer extends LegalEntity
 				// idea here is that we'll take any Company, but favour companies in other countries
 				if (i instanceof Company && i.getCountry() != this.residence) // that test should work because there should only be one instance of each country, so it's the same object
 					choice = (Company)i;
-				else if (i instanceof Company)
-					choice = (Company)i;
+				
+				// this would make it that compagnies in the same country are acceptable
+				// it could work, but I'd rather compagnies get created
+				//else if (i instanceof Company)
+				//	choice = (Company)i;
+				
 			}
 			
 			if (choice == null) //looks like we don't have much options
@@ -129,9 +133,13 @@ public class Taxpayer extends LegalEntity
 				choice = lol;
 			}
 			
-			BankAccount targetAccount = choice.pleaseFraud(this);
-			accounts.get(0).changeBalance(cash); cash = 0;
-			residence.log("(frauding) "+residence.newTransaction(accounts.get(0), targetAccount, accounts.get(0).getBalance()));
+			BankAccount targetAccount = choice.pleaseFraud(this); //company sends back an account to depose money in
+			
+			accounts.get(0).changeBalance(cash); cash=0;
+			int amountToBeSent = 0, accountBuffer = accounts.get(0).getBalance();
+			while (accountBuffer>1000)
+			{ amountToBeSent+=1000;accountBuffer-=1000; } // increments of 1000 being cleaner and all
+			residence.log("(frauding) "+residence.newTransaction(accounts.get(0), targetAccount, amountToBeSent));
 			
 		}
 	}
