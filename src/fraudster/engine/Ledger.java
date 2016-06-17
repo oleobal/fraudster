@@ -157,7 +157,6 @@ public class Ledger implements Serializable
 		for (int k=0;k<10;k++)
 		{
 			//TODO tweak numbers ?
-			//TODO set up branches, owners and all
 			c = new Country(countryNames[k], this);
 			for (int i=0; i<80+rand.nextInt(60);i++)
 			{

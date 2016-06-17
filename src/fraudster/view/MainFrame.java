@@ -283,17 +283,17 @@ public class MainFrame extends JFrame implements ActionListener
 					
 					else if (lol == 0) //suspicious transactions
 					{
-						//TODO
+						//TODO waiff screen
 						commandField.reset();
 					}
 					else if (lol == 1) //past cases
 					{
-						//TODO
+						//TODO waiff screen
 						commandField.reset();
 					}
 					else if (lol == 2) //new denounciation
 					{
-						//TODO
+						//TODO waiff screen
 						commandField.reset();
 					}
 					

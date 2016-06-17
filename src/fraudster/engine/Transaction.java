@@ -61,10 +61,10 @@ public class Transaction implements java.io.Serializable
 	public String toString()
 	{
 		return "Transaction:\n"+
-			   "DATE: "+date+"\n\n"+
+			   "DATE: "+date+"\n"+
+			   "AMOUNT ($): "+amount+"\n\n"+
 		       "SENDER "+sender+"\n\n"+
-		       "RECIPIENT "+recipient+"\n\n"+
-			   "AMOUNT ($): "+amount;
+		       "RECIPIENT "+recipient;
 	}
 	
 	

@@ -211,6 +211,17 @@ public class Country implements Serializable
 	}
 	
 	/**
+	 * a Company signaling there's something fishy going on, as a fraudulent transaction takes place (Company.pleaseFraud())
+	 * @param suspectAccount the account that will receive the money
+	 */
+	public void signalFraud(BankAccount suspectAccount)
+	{
+		//FIXME IT'S NOT WORKING
+		//TODO signal to ledger and all
+		
+	}
+	
+	/**
 	 * similar to the LegalEntity doBusiness() method, this activates the doBusiness() of every national, and maybe do a little State stuff too
 	 */
 	public void doBusiness()

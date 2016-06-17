@@ -23,7 +23,7 @@ public class Denunciation
 	{
 		if (supposedFrauder.isFrauding())
 		{
-			//TODO
+			//TODO check validity of denounciation
 			if (suspectedAccount.getOwner().isFrauding())
 			{
 				// now that doesn't mean it's valid, because they might be unrelated. We'll check who's the account owner's owner, and the owner's owner's owner, and so on
