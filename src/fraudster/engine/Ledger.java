@@ -4,6 +4,7 @@ package fraudster.engine;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import java.io.Serializable;
 import java.util.NoSuchElementException;
@@ -32,8 +33,8 @@ public class Ledger implements Serializable
 	/**
 	 * every transaction
 	 */
-	private ArrayList<Transaction> transactions;
-	private ArrayList<Transaction> suspiciousTransactions;
+	private CopyOnWriteArrayList<Transaction> transactions;
+	private CopyOnWriteArrayList<Transaction> suspiciousTransactions;
 
 	/**
 	 * logging system for debugging
@@ -47,8 +48,8 @@ public class Ledger implements Serializable
 		date = 0;
 		countries = new ArrayList<Country>();
 		investigators = new HashMap<Country, Investigator>();
-		transactions = new ArrayList<Transaction>();
-		suspiciousTransactions = new ArrayList<Transaction>();
+		transactions = new CopyOnWriteArrayList<Transaction>();
+		suspiciousTransactions = new CopyOnWriteArrayList<Transaction>();
 		log = new HashMap<Integer, ArrayList<String>>();
 	}
 
@@ -95,6 +96,24 @@ public class Ledger implements Serializable
 	}
 
 	/**
+	 * works the same as Ledger.newTransaction() but also adds the transaction to the suspicious transactions list
+	 */
+	public Transaction newFraudulentTransaction(BankAccount from, BankAccount to, Integer howMuch) throws IllegalStateException, IllegalArgumentException
+	{
+		try
+		{
+			Transaction lol = new Transaction(from, to, howMuch, date);
+			transactions.add(lol);
+			suspiciousTransactions.add(lol); // we got you !
+			return lol;
+		}
+		catch (RuntimeException e)
+		{
+			throw e;
+		}
+	}
+
+	/**
 	 * get all transactions for a given day
 	 */
 	public ArrayList<Transaction> getTransactions(Integer date)
@@ -107,6 +126,14 @@ public class Ledger implements Serializable
 		}
 		
 		return returnedList;
+	}
+	
+	/**
+	 * @return a copy of the suspicious transactions list
+	 */
+	public ArrayList<Transaction> getSuspiciousTransactions()
+	{
+		return new ArrayList<Transaction>(suspiciousTransactions);
 	}
 	
 	//TODO time (days)

@@ -149,6 +149,18 @@ public class MainGraphical implements Serializable
 		}
 	}
 	
+	public ArrayList<Transaction> getSuspiciousTransactions()
+	{
+		try
+		{
+			return theLedger.getSuspiciousTransactions();
+		}
+		catch (NoSuchElementException e)
+		{
+			throw e;
+		}
+	}
+	
 	/**
 	 * returns a reference to the (hopefully sole) Player object, in case
 	 * right now I don't want to think about it too much

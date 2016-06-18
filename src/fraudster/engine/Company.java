@@ -82,7 +82,7 @@ public class Company extends LegalEntity
 	
 	/**
 	 * An owner can ask a company he/she owns to fraud so his money can get out the country.
-	 * 1/200 chance the company will signal the authorities the fraud, enabling this entire game
+	 * 1/10 chance the company will signal the authorities the fraud, enabling this entire game
 	 * 
 	 * @param owner The owner should pass himself so not anyone can ask a company to fraud
 	 */
@@ -92,8 +92,6 @@ public class Company extends LegalEntity
 		if (owner.checkPossessed(this) == false)
 			throw new IllegalArgumentException("You can't ask a company you don't own to fraud.");
 		
-		//TODO add a chance that the company will signal the transaction to an authority
-		
 		if (accounts.size() < 2) //account proliferation is fun !
 			new BankAccount((Bank)residence.getRandomNational("bank"), this);
 		
@@ -101,10 +99,10 @@ public class Company extends LegalEntity
 		
 		// signal it to the authorities !
 		// this is a more-honest-than-the-rest employee kollaborating
-		if ((new Random()).nextInt(200) == 0)
+		if ((new Random()).nextInt(1) == 0)
 		{
-			residence.signalFraud(accounts.get(accounts.size()-1));
 			residence.log("(frauding) Fraud signaled !\n"+this+"\n"+owner);
+			residence.signalFraud(accounts.get(accounts.size()-1));
 		}
 		
 		return(accounts.get(accounts.size()-1));
@@ -151,12 +149,12 @@ public class Company extends LegalEntity
 			scale++;
 			accounts.get(0).changeBalance(-750000); //investissement de capacité, comme on dit
 		}
-		else if (scale==1 && accounts.get(0).getBalance()>5000000 &&rand.nextInt(100)==0) // 5 millions
+		else if (scale==1 && accounts.get(0).getBalance()>5000000 &&rand.nextInt(50)==0) // 5 millions
 		{
 			scale++;
 			accounts.get(0).changeBalance(-4800000);
 		}
-		else if (scale==2 && accounts.get(0).getBalance()>200000000 && rand.nextInt(100)==0) //200 millions
+		else if (scale==2 && accounts.get(0).getBalance()>200000000 && rand.nextInt(50)==0) //200 millions
 		{
 			scale++;
 			accounts.get(0).changeBalance(-180000000);
@@ -164,7 +162,7 @@ public class Company extends LegalEntity
 		
 		
 		//new branches
-		if (scale>1 && accounts.get(0).getBalance()>5000000 && rand.nextInt(100)==0) //5 millions
+		if (scale>1 && accounts.get(0).getBalance()>5000000 && rand.nextInt(50)==0) //5 millions
 		{
 			//extend operations
 			Company lol = new Company(residence.getOtherCountry(""), 1);
@@ -174,11 +172,24 @@ public class Company extends LegalEntity
 		//sending money down to sub-companies
 		if (accounts.get(0).getBalance()>1000000 && !possessions.isEmpty() && rand.nextInt(5)==0 )
 		{
-			LegalEntity winner = possessions.get(rand.nextInt(possessions.size()));
 			
-			residence.newTransaction(accounts.get(0), winner.accounts.get(0), 1000000); //1 million
-			//FIXME: this can result in problems if the target doesn't have an account
-			//I think that's the source at least
+			for (int i=0;i<5;i++)
+			{
+				LegalEntity winner = possessions.get(rand.nextInt(possessions.size()));
+				
+				try
+				{
+					residence.newTransaction(accounts.get(0), winner.accounts.get(0), 1000000); //1 million
+					break;
+				}
+				catch (IndexOutOfBoundsException e)
+				{
+					continue;
+					//this can result in problems if the target doesn't have an account
+					//my solution is just to try more than once, just in case
+					//not much else to do here though, we can't just tell them to make an account, they will automatically
+				}
+			}
 		}
 		
 		

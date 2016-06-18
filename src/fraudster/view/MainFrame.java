@@ -12,13 +12,10 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
 import java.lang.NumberFormatException;
 
 
@@ -283,7 +280,7 @@ public class MainFrame extends JFrame implements ActionListener
 					
 					else if (lol == 0) //suspicious transactions
 					{
-						//TODO waiff screen
+						wiaffSuspiciousTransactionsScreen();
 						commandField.reset();
 					}
 					else if (lol == 1) //past cases
@@ -614,6 +611,23 @@ public class MainFrame extends JFrame implements ActionListener
 		commandField.source="wiaffScreen";
 		commandField.minVal = 0;
 		commandField.maxVal = 2;
+	}
+	
+
+	public void wiaffSuspiciousTransactionsScreen()
+	{
+		String result="Here is a list of all transactions flagged as suspicious through various means. Use them as a starting point for your investigation.\nNote : We are day "+main.getDay();
+		result+="\n\n";
+		ArrayList<Transaction> trans = main.getSuspiciousTransactions();
+		for (Transaction i : trans)
+			{
+				result+="\n\n------------------------------------\n\n"+i;
+			}
+		if (trans.isEmpty())
+		{
+			result+="(No suspicious transactions)";
+		}
+		terminal.setText(result);
 	}
 	
 	public void waiffTransactionsScreen()
