@@ -125,7 +125,7 @@ public class MainFrame extends JFrame implements ActionListener
 		// not all that important, though, because it just screws with the display
 		//System.err.println(System.getProperty("os.name"));
 		if (System.getProperty("os.name").equals("Linux"))
-			screen.setBorder(new EmptyBorder(45,65,68,25));	
+			screen.setBorder(new EmptyBorder(45,65,68,13));	
 		else
 			screen.setBorder(new EmptyBorder(45,65,50,8));	
 		screen.setOpaque(false);
