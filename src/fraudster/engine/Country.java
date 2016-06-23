@@ -34,15 +34,7 @@ public class Country implements Serializable
 	 */
 	private Ledger theLedger;
 
-	/**
-	 * a company signals that a suspicious transaction is going to take place
-	 * this flag signals that
-	 */
-	//private boolean nextTransactionSuspicious;
-	/**
-	 * holds a signaled account while waiting for the next transaction with it
-	 */
-	private CopyOnWriteArrayList<BankAccount> nextTransactionSuspectAccount;
+	
 	/**
 	 * Just some values initializations.
 	 */
@@ -54,7 +46,7 @@ public class Country implements Serializable
 		relations = new Hashtable<Country, Integer>();
 		nationals = new CopyOnWriteArrayList<LegalEntity>();
 		//nextTransactionSuspicious=false;
-		nextTransactionSuspectAccount=new CopyOnWriteArrayList<BankAccount>();
+		
 
 		theLedger = mainLedger;
 		theLedger.addCountry(this);
@@ -178,7 +170,7 @@ public class Country implements Serializable
 		}
 		
 		if (theOnesWeWant.isEmpty())
-			throw new NoSuchElementException("No "+type+" in this country.");
+			throw new NoSuchElementException("No "+type+" in this country ("+this+").");
 		
 		return theOnesWeWant.get((new Random()).nextInt(theOnesWeWant.size()));
 	
@@ -212,16 +204,7 @@ public class Country implements Serializable
 	{
 		try
 		{
-			//FIXME: IMPORTANT we fill it up in signalFraud(), but here it's empty !
-			System.err.println(this+": "+nextTransactionSuspectAccount.size());
-			if (nextTransactionSuspectAccount.contains(to))
-			{
-				System.err.println("YOUOHOUOUUUU2");
-				//nextTransactionSuspicious=false;
-				return theLedger.newFraudulentTransaction(from, to, howMuch);
-			}
-			else
-				return theLedger.newTransaction(from, to, howMuch);
+			return theLedger.newTransaction(from, to, howMuch);
 		}
 		catch (RuntimeException e)
 		{
@@ -242,9 +225,7 @@ public class Country implements Serializable
 	public void signalFraud(BankAccount suspectAccount)
 	{
 		//this will signal the next transaction as fraudulent to the ledger
-		//nextTransactionSuspicious = true;
-		nextTransactionSuspectAccount.add(suspectAccount);
-		log("(country) "+this+": fraud registered ("+nextTransactionSuspectAccount.size()+" elements total for today)");
+		theLedger.signalFraud(suspectAccount);
 	}
 	
 	/**
@@ -252,8 +233,7 @@ public class Country implements Serializable
 	 */
 	public void doBusiness()
 	{
-		log("(country) Clearing "+this+" daily suspect accounts list of "+nextTransactionSuspectAccount.size()+ " elements.");
-		nextTransactionSuspectAccount.clear(); //clean up for a new day
+		
 		int k=0;
 		for (LegalEntity i : nationals)
 		{

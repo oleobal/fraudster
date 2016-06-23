@@ -22,7 +22,6 @@ public class Company extends LegalEntity
 		
 		this.name=getRandomName();
 		
-		
 	}
 	
 	/**
@@ -42,6 +41,7 @@ public class Company extends LegalEntity
 			scale=1; // 4/10
 		else if (lol<10)
 			scale=0; // 3/10
+		
 	}
 	
 	
@@ -82,7 +82,7 @@ public class Company extends LegalEntity
 	
 	/**
 	 * An owner can ask a company he/she owns to fraud so his money can get out the country.
-	 * 1/10 chance the company will signal the authorities the fraud, enabling this entire game
+	 * 1/50 chance the company will signal the authorities the fraud, enabling this entire game
 	 * 
 	 * @param owner The owner should pass himself so not anyone can ask a company to fraud
 	 */
@@ -94,12 +94,14 @@ public class Company extends LegalEntity
 		
 		if (accounts.size() < 2) //account proliferation is fun !
 			new BankAccount((Bank)residence.getRandomNational("bank"), this);
+		if (accounts.size() < 2) //account proliferation is fun !
+			new BankAccount((Bank)residence.getRandomNational("bank"), this);
 		
 		frauding = true;
 		
 		// signal it to the authorities !
 		// this is a more-honest-than-the-rest employee kollaborating
-		if ((new Random()).nextInt(1) == 0)
+		if ((new Random()).nextInt(50) == 0)
 		{
 			residence.log("(frauding) Fraud signaled !\n"+this+"\n"+owner);
 			residence.signalFraud(accounts.get(accounts.size()-1));
@@ -147,7 +149,7 @@ public class Company extends LegalEntity
 		if (scale==0 && accounts.get(0).getBalance()>1000000 && rand.nextInt(50)==0) // 1 million
 		{
 			scale++;
-			accounts.get(0).changeBalance(-750000); //investissement de capacité, comme on dit
+			accounts.get(0).changeBalance(-750000); //investissement de capacitï¿½, comme on dit
 		}
 		else if (scale==1 && accounts.get(0).getBalance()>5000000 &&rand.nextInt(50)==0) // 5 millions
 		{

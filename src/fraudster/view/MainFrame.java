@@ -364,7 +364,7 @@ public class MainFrame extends JFrame implements ActionListener
 								
 								System.exit(-1); //gawd
 							}
-							thePlayer = main.getPlayer();;//FIXME : nullpointerexception here for some reason
+							thePlayer = main.getPlayer();//FIXME : nullpointerexception here for some reason
 							
 							commandField.reset();
 							gameLocked=false;

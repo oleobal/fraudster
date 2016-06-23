@@ -35,6 +35,14 @@ public class Ledger implements Serializable
 	 */
 	private CopyOnWriteArrayList<Transaction> transactions;
 	private CopyOnWriteArrayList<Transaction> suspiciousTransactions;
+	
+	/**
+	 * holds accounts that will recieve suspicious transactions for the day
+	 * cleaned every day
+	 * 
+	 * originally I put that on the country level but that was very dumb
+	 */
+	private CopyOnWriteArrayList<BankAccount> nextTransactionSuspectAccounts ;
 
 	/**
 	 * logging system for debugging
@@ -50,6 +58,7 @@ public class Ledger implements Serializable
 		investigators = new HashMap<Country, Investigator>();
 		transactions = new CopyOnWriteArrayList<Transaction>();
 		suspiciousTransactions = new CopyOnWriteArrayList<Transaction>();
+		nextTransactionSuspectAccounts=new CopyOnWriteArrayList<BankAccount>();
 		log = new HashMap<Integer, ArrayList<String>>();
 	}
 
@@ -73,12 +82,26 @@ public class Ledger implements Serializable
 		ArrayList<Country> lol = (ArrayList<Country>)countries.clone();
 		return lol;
 	}
+	
+	/**
+	 * called by Country.signalFraud();
+	 * because originally it was at country level
+	 * but that was stupid
+	 * @param suspectAccount
+	 */
+	public void signalFraud(BankAccount suspectAccount)
+	{
+		nextTransactionSuspectAccounts.add(suspectAccount);
+		log("(ledger) fraud registered ("+nextTransactionSuspectAccounts.size()+" elements total for today)");
+	}
 
 	//TODO way to flag transactions as suspicious that's not too dumb
 	/**
 	 * create a new Transaction dated from today and store it in the ledger
 	 *
 	 * sent back to you just in case you need it
+	 * 
+	 * also adds the transaction to the list of suspicious transactions if the recipient account has been signaled
 	 */
 	public Transaction newTransaction(BankAccount from, BankAccount to, Integer howMuch) throws IllegalStateException, IllegalArgumentException
 	{
@@ -86,6 +109,10 @@ public class Ledger implements Serializable
 		{
 			Transaction lol = new Transaction(from, to, howMuch, date);
 			transactions.add(lol);
+			if (nextTransactionSuspectAccounts.contains(to))
+			{
+				suspiciousTransactions.add(lol); //we got you !
+			}
 			return lol;
 		}
 		catch (RuntimeException e)
@@ -95,23 +122,6 @@ public class Ledger implements Serializable
 
 	}
 
-	/**
-	 * works the same as Ledger.newTransaction() but also adds the transaction to the suspicious transactions list
-	 */
-	public Transaction newFraudulentTransaction(BankAccount from, BankAccount to, Integer howMuch) throws IllegalStateException, IllegalArgumentException
-	{
-		try
-		{
-			Transaction lol = new Transaction(from, to, howMuch, date);
-			transactions.add(lol);
-			suspiciousTransactions.add(lol); // we got you !
-			return lol;
-		}
-		catch (RuntimeException e)
-		{
-			throw e;
-		}
-	}
 
 	/**
 	 * get all transactions for a given day
@@ -149,6 +159,9 @@ public class Ledger implements Serializable
 	 */
 	public void  nextDay()
 	{
+		log("(ledger) Clearing daily suspect accounts list of "+nextTransactionSuspectAccounts.size()+ " elements.");
+		this.nextTransactionSuspectAccounts.clear();
+		
 		date++;
 		for (Country i : countries)
 		{
