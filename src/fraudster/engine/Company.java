@@ -50,16 +50,16 @@ public class Company extends LegalEntity
 		// TODO expand to other languages
 		// apparently people use chinese names for embezzlements to complicate things
 		String[][] firstArg = {
-			{"Pecha", "Little", "Development", "Air", "Victory", "Standard", "Ware", "Software", "Agile", "Poly", "Work", "Hardware", "Culinary", "Delicious", "Bio", "Organic", "Colour", "Red", "Swift"},
-			{"Societe", "Groupe", "Groupement", "Compagnie", "Amis", "Amateurs", "Espoir", "Joseph", "Magasins", "Restaurant", "Bleu"},
-			{"I.G.", "Badische", "Maschinen", "Nurnberg", "Mercedes", "Volks", "Stadt", "Ulm", "Essen", "Schwarz", "Weiss"},
-			{"Companía", "Fabrica", "Comercio", "Industria", "Sociedad", "Espanol", "Barcelona", "Madeira", "Mexico", "Carioca"}
+			{"Pecha", "Little", "Development", "Air", "Victory", "Standard", "Ware", "Software", "Agile", "Poly", "Work", "Smith", "Dan", "Hardware", "Lazarus", "London", "Seattle", "Epoch", "Icarus", "Culinary", "Delicious", "Bio", "Organic", "Colour", "Red", "Swift"},
+			{"Societe", "Groupe", "Groupement", "Compagnie", "Amis", "Amateurs", "Espoir", "Joseph", "Magasins", "Restaurant", "Bleu", "Icare", "Aimé", "Boucher"},
+			{"I.G.", "Badische", "Maschinen", "Nurnberg", "Mercedes", "Volks", "Stadt", "Ulm", "Essen", "Schwarz", "Weiss", "Wurst", "Maus", "Ratte", "Jager"},
+			{"Companía", "Fabrica", "Comercio", "Industria", "Sociedad", "Espanol", "Barcelona", "Madeira", "Mexico", "Carioca", "Tequila"}
 		};
 			
 		String[][] secondArg = {
-			{"Banana", "Life", "Group", "Fishes", "Coop", "Oil", "Mix", "House", "Fun", "Love", "Home", "Steel"},
-			{"Associes", "Chimie", "Developpement", "Investissement", "Meubles", "Tresors", "Antiquités", "Poisson", "Fibre", "Acier"},
-			{"Fabrik", "Soda", "Gruppe", "Anilin", "Farbenindustrie", "Wagen", "Silber", "Jagdwaffen", "Chemie", "Stahl"},
+			{"Banana", "Life", "Group", "Fishes", "Coop", "Oil", "Mix", "House", "Fun", "Love", "Home", "Steel", "Machines", "Wesson", "Brothers", "& sons", "& co", "Elite", "Firearms", "Beats"},
+			{"Associes", "Chimie", "Developpement", "Investissement", "Meubles", "Tresors", "Antiquités", "Poisson", "Fibre", "Acier", "Viandes", "Couleurs", "Livraisons", "Transport"},
+			{"Fabrik", "Soda", "Gruppe", "Anilin", "Farbenindustrie", "Wagen", "Silber", "Jagdwaffen", "Chemie", "Stahl", "Eisen", "Haus"},
 			{"Logistica", "de Hidrocarburos", "Acos", "Aviación", "Infraestructuras", "Bocadillo", "Sandwiches", "Inversiones", "Automoviles"}
 		};
 		String[][] thirdArg = {
