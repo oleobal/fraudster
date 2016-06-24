@@ -10,12 +10,13 @@ public class CommandField extends JTextField
 {
 	public Integer minVal, maxVal;
 	public Boolean numbersOnly;
-	public String source="";
+	public String source;
 	public Object storage; // I finally gave up on pretending I know what I'm doing
 	
 	public CommandField()
 	{
 		super();
+		source="";
 	}
 	
 	public Integer getMin()

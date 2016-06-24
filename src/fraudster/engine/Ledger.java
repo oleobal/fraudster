@@ -48,6 +48,7 @@ public class Ledger implements Serializable
 	 * logging system for debugging
 	 */
 	private HashMap<Integer, ArrayList<String>> log;
+	// Yes, java.util.logging.Logger, I know..
 	
 	//TODO: List of denounciations
 	

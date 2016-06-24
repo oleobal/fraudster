@@ -8,8 +8,8 @@ package fraudster.engine;
  */
 public class Denunciation
 {
-	private Taxpayer supposedFrauder;
-	private BankAccount suspectedAccount;
+	public Taxpayer supposedFrauder;
+	public BankAccount suspectedAccount;
 	
 	public Denunciation(BankAccount a, Taxpayer t)
 	{
@@ -23,7 +23,7 @@ public class Denunciation
 	{
 		if (supposedFrauder.isFrauding())
 		{
-			//TODO check validity of denounciation
+			//TODO debug denounc validity
 			if (suspectedAccount.getOwner().isFrauding())
 			{
 				// now that doesn't mean it's valid, because they might be unrelated. We'll check who's the account owner's owner, and the owner's owner's owner, and so on

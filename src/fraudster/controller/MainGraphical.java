@@ -230,7 +230,7 @@ public class MainGraphical implements Serializable
 	 * this is static because it is called from the main
 	 * an object obviously can't rewrite itself
 	 *
-	 * returns null if a problem occured
+	 * returns null if a problem occurred
 	 */
 	public static MainGraphical loadGame(String filename)
 	{

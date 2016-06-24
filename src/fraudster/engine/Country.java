@@ -271,7 +271,50 @@ public class Country implements Serializable
 
 		return comps;
 	}
+	
+	
+	 /**
+	 * ArrayList with all taxpayers in the realm
+	 */
+	public ArrayList<Taxpayer> getTaxpayers()
+	{
+		ArrayList<Taxpayer> comps = new ArrayList<Taxpayer>();
+		Taxpayer lol;
+		for (LegalEntity i:nationals)
+		{
+			if (i instanceof Taxpayer)
+			{
+				//@SuppressWarnings("unchecked")
+				lol = (Taxpayer)i;
+				comps.add(lol);
+			}
+		}
 
+		return comps;
+	}
+	
+	
+	 /**
+	 * ArrayList with all banks in the realm
+	 */
+	public ArrayList<Bank> getBanks()
+	{
+		ArrayList<Bank> comps = new ArrayList<Bank>();
+		Bank lol;
+		for (LegalEntity i:nationals)
+		{
+			if (i instanceof Bank)
+			{
+				//@SuppressWarnings("unchecked")
+				lol = (Bank)i;
+				comps.add(lol);
+			}
+		}
+
+		return comps;
+	}
+	
+	
 	/**
 	 * relays the message to the ledger's log
 	 */

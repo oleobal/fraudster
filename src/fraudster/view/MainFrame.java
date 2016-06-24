@@ -85,6 +85,7 @@ public class MainFrame extends JFrame implements ActionListener
 		terminal.setFont(fontIBM.deriveFont(15f));
 		terminal.setEditable(false);
 		terminal.setLineWrap(true);
+		terminal.setWrapStyleWord(true);
 		
 		
 		/*
@@ -226,17 +227,18 @@ public class MainFrame extends JFrame implements ActionListener
 	{
 		if (e.getSource() == commandField)
 		{
+			//System.err.println("source: "+commandField.source+"\nstorage: "+commandField.storage+"\nmaxVal: "+commandField.maxVal);
 			if (commandField.getText().equals(""))
 				return;
 			
-			if (commandField.source=="startUpScreen") // name selction
+			if (commandField.source.equals("startUpScreen")) // name selction
 			{
 				main.setPlayerName(commandField.getText());
 				commandField.reset();
 				countrySelectScreen();
 				
 			}
-			else if (commandField.source=="countrySelectScreen") // country select
+			else if (commandField.source.equals("countrySelectScreen")) // country select
 			{
 				
 				try
@@ -281,7 +283,6 @@ public class MainFrame extends JFrame implements ActionListener
 					else if (lol == 0) //suspicious transactions
 					{
 						wiaffSuspiciousTransactionsScreen();
-						commandField.reset();
 					}
 					else if (lol == 1) //past cases
 					{
@@ -290,8 +291,7 @@ public class MainFrame extends JFrame implements ActionListener
 					}
 					else if (lol == 2) //new denounciation
 					{
-						//TODO waiff screen
-						commandField.reset();
+						wiaffNewDenunciationScreen();
 					}
 					
 				}
@@ -302,6 +302,48 @@ public class MainFrame extends JFrame implements ActionListener
 				}
 			}
 			
+			else if (commandField.source.equals("wiaffNewDenunciationScreen"))
+			{
+				try
+				{
+					String [] buffer = commandField.getText().split(",");
+					Integer owner = Integer.parseInt(buffer[0]);
+					Integer ownee = Integer.parseInt(buffer[1]);
+					
+					if ( owner < commandField.getMin()  || owner > commandField.getMax() || ownee < commandField.getMin()  || ownee > commandField.getMax())
+					{
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number from "+commandField.getMin()+" to "+commandField.getMax()+", please.");
+						commandField.setText("");
+					}
+					else
+					{
+						if (thePlayer.getAddressBook().get(owner) instanceof Taxpayer && thePlayer.getAddressBook().get(ownee) instanceof BankAccount)
+						{
+							//FIXME: this is a very player-centric way of managing that
+							//Ideally it'd be in the ledger, and all
+							//but I'm short on time now. Later.
+
+							Denunciation d = new Denunciation((BankAccount) thePlayer.getAddressBook().get(ownee), (Taxpayer) thePlayer.getAddressBook().get(owner));
+							thePlayer.character.addDenunciation(d);
+							
+							checkDenunciationScreen(d);
+							
+						}
+						else
+						{
+							terminal.setText(terminal.getText()+"\n\nHave you made a typo ? This doesn't look possible.");
+							commandField.setText("");
+						}
+					}
+					
+				}
+				catch (NumberFormatException exc)
+				{ 
+					terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
+					commandField.setText("");
+				}
+				
+			}
 			
 			else if (commandField.source.equals("countriesScreen"))
 			{
@@ -317,7 +359,6 @@ public class MainFrame extends JFrame implements ActionListener
 					else
 					{
 						singleCountryScreen(lol);
-						commandField.reset();
 					}
 					
 				}
@@ -327,6 +368,103 @@ public class MainFrame extends JFrame implements ActionListener
 					commandField.setText("");
 				}
 				
+			}
+			
+			else if (commandField.source.equals("singleCountryScreen"))
+			{
+				if (commandField.getText().startsWith("b"))
+				{
+					try
+					{
+						int i = Integer.parseInt(commandField.getText().substring(1));
+						Country lol = (Country) commandField.storage;
+						ArrayList<Bank> buffer = lol.getBanks();
+						if (i < buffer.size() && i>=0)
+						{
+							bankScreen(buffer.get(i));
+						}
+						else
+						{
+							terminal.setText(terminal.getText()+"\n\nIt looks like you tried to contact a bank, but the numbers were out of the right range.");
+							commandField.setText("");
+						}
+						
+					}
+					catch (Exception exc)
+					{
+						terminal.setText(terminal.getText()+"\n\nIt looks like you tried to contact a bank, but we couldn't understand your query.");
+						commandField.setText("");
+
+					}
+				}
+				else
+				{
+					try
+					{
+						int i = Integer.parseInt(commandField.getText());
+						if (i>commandField.maxVal)
+						{
+							terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
+							commandField.setText("");
+						}
+						else
+						{
+							ArrayList<LegalEntity> buffer = new ArrayList<LegalEntity>();
+							Country lol = (Country) commandField.storage;
+							buffer.addAll(lol.getCompanies());
+							buffer.addAll(lol.getTaxpayers());
+
+							thePlayer.addToAddressBook(buffer.get(i));
+							addressBookScreen(buffer.get(i));
+							commandField.reset();
+							commandField.setText("");
+
+						}
+					}
+					catch (NumberFormatException exc)
+					{
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number or b<number>, please.");
+						commandField.setText("");
+						
+					}
+				}
+			}
+			
+			else if (commandField.source.equals("bankScreen"))
+			{
+				try
+				{
+					int i = Integer.parseInt(commandField.getText());
+					if (i>commandField.maxVal)
+					{
+						terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. The number is too big.");
+						commandField.setText("");
+					}
+					else
+					{
+						@SuppressWarnings("unchecked")
+						ArrayList<BankAccount> buffer = (ArrayList<BankAccount>) commandField.storage;
+						thePlayer.addToAddressBook(buffer.get(i));
+						addressBookScreen(buffer.get(i));
+						commandField.setText("");
+
+					}
+				}
+				catch (NumberFormatException exc)
+				{
+					terminal.setText(terminal.getText()+"\n\nThere was an error in your last command. Only a number, please.");
+					commandField.setText("");
+					
+				}
+			}
+			
+			else if (commandField.source.equals("homeScreen"))
+			{
+				if (commandField.getText().equals("notes"))
+				{
+					commandField.reset();
+					addressBookScreen(null);
+				}
 			}
 			
 			else if (commandField.source.equals("logOnScreen")) //new game / load 
@@ -572,19 +710,63 @@ public class MainFrame extends JFrame implements ActionListener
 				result+=entry.getKey()+" -- "+entry.getValue()+"\n";
 			}
 			
+			result+="\n\n\nBanks:\n------\n"
+					+ "You can contact a bank by typing \"b\" and then its number in the command bar. For instance, b0 for the first one in the list.\n\n";
+			
+			int j = 0;
+			for (Bank ba : target.getBanks())
+			{
+				result+="["+j+"] "+ba+"\n";
+				j++;
+			}
+			
+			
+			result+="\n\n\n\nYou can save a company or a taxpayer in your address book, marking it as of interest. To do so, type its number in the command bar.";
+			int i = 0;
+			
 			result +="\n\n\nCompanies:\n----------\n";
 			result +="(sizes, smallest to largest: small, medium, large, trust)\n\n";
 			for (Company co : target.getCompanies())
 			{
-				result+=co+"\n";
-				
+				result+="["+i+"] "+co+"\n";
+				i++;
+			}
+			
+			result +="\n\n\nTaxpayers:\n----------\n";
+			result+="(wealth, smallest to largest: poor, well-off, rich, very rich)\n\n";
+			for (Taxpayer ta : target.getTaxpayers())
+			{
+				result+="["+i+"] "+ta+"\n";
+				i++;
 			}
 			
 			commandField.source = "singleCountryScreen";
+			commandField.storage = target;
+			commandField.minVal = 0;
+			commandField.maxVal = i-1;
 			terminal.setText(result);terminal.setCaretPosition(0);
 		}
 		catch (NoSuchElementException e)
 		{ result = "No countries"; }
+	}
+	
+	public void bankScreen(Bank b)
+	{
+		String result = "Bank: "+b.getName()+"\n=============================\n\n";
+		//FIXME for now this only displays a list of BankAccounts..
+		result+="Here is a list of accounts in this bank: \n\n";
+		
+		int i = 0;
+		for (BankAccount ba : b.getAccounts())
+		{
+			result+="\n-------------------------------\n["+i+"] "+ba;
+			i++;
+		}
+		terminal.setText(result);
+		terminal.setCaretPosition(0);
+		commandField.source = "bankScreen";
+		commandField.storage = b.getAccounts();
+		commandField.maxVal = i-1;
 	}
 	
 	/**
@@ -608,6 +790,7 @@ public class MainFrame extends JFrame implements ActionListener
 		"[1] for a list of past and current cases"+"\n"+
 		"[2] for new claims concerning unsolved transactions";
 		terminal.setText(result);
+		commandField.requestFocus();
 		commandField.source="wiaffScreen";
 		commandField.minVal = 0;
 		commandField.maxVal = 2;
@@ -636,6 +819,43 @@ public class MainFrame extends JFrame implements ActionListener
 		
 	}
 	
+	
+	public void wiaffNewDenunciationScreen()
+	{
+		String result="Here is a list of legal entities you have saved in your address book. Type <owner>,<owned> to claim there is a fraud link between them.\nFor instance, type \"32,7\"\n\n";
+		
+		int i = 0;
+		for (Object l : thePlayer.getAddressBook())
+		{
+			result+="["+i+"] "+l+"\n\n";
+			i++;
+		}
+		
+		terminal.setText(result);
+		commandField.source="wiaffNewDenunciationScreen";
+		commandField.maxVal = i-1;
+	}
+	
+	/**
+	 * normally this would be done via mail, to have you wait a few days
+	 * but you know, I haven't actually done anything towards the mail system.
+	 */
+	//FIXME
+	public void checkDenunciationScreen(Denunciation d)
+	{
+		String result = "You have made an outrageous claim today ! You are asserting a honest citizen was actually frauding all along !\nConcerned are:\n"+d.supposedFrauder+"\n\nand:\n"+d.suspectedAccount+"\n\n\n";
+		
+		if (d.checkValidity())
+		{
+			result+="Incredible ! You were right !\nThis is a proud day for the nation of "+thePlayer.character.getCountry()+" who employ you. You will recieve a reward shortly. Good work !"; //TODO actual rewards, and showing the dosh your character has.
+		}
+		else
+		{
+			result+="No link was found between the account and the defendant.\nIt was truly an outlandish claim, and your reputation has been tainted forever by this disgrace. But do not lose hope !";
+		}
+		
+		terminal.setText(result);
+	}
 	
 	/**
 	 * just some static help
@@ -696,9 +916,34 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		String info = "         Welcome, "+thePlayer.getName()+" from "+thePlayer.getCountry()+
 		"\n         We are "+main.getTodaysDateLong()+
-		"\n         It has been "+main.getDay()+" days since you've started.";
+		"\n         It has been "+main.getDay()+" days since you've started."+
+		"\n         You adress book has "+thePlayer.getAddressBook().size()+" entries, type \"notes\" to consult it.";
 		terminal.setText(map+"\n\n"+info); //TODO mail ! yay !
 		commandField.reset(); //just in case..
+		commandField.source="homeScreen";
+	}
+	
+	/**
+	 * I'm going to be honest, this was an afterthought
+	 * @param newItem should be null if there's nothing new
+	 */
+	public void addressBookScreen(Object newItem)
+	{
+		String result="This is your address book, where you can keep track of items of particular interest.\nNumber of entries: "+thePlayer.getAddressBook().size()+"\n\n";
+	
+		if (newItem != null)
+		{
+			result+="A new item has been added:\n"+newItem+"\n\n";
+		}
+		
+		result+="List of entries:\n---------------";
+	
+		for (Object i : thePlayer.getAddressBook())
+		{
+			result+="\n"+i+"\n";
+		}
+		
+		terminal.setText(result);
 	}
 	
 	/**

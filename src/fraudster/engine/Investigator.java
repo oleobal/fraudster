@@ -1,6 +1,7 @@
 package fraudster.engine;
 
 import java.lang.IllegalStateException;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -10,6 +11,7 @@ import java.util.Random;
 public class Investigator extends Taxpayer
 {
 
+	ArrayList<Denunciation> gloryKills;
 	/**
 	 * throws IllegalStateException if the country already has an investigator
 	 *
@@ -21,6 +23,7 @@ public class Investigator extends Taxpayer
 		try
 		{
 			residence.addInvestigator(this);
+			gloryKills = new ArrayList<Denunciation>();
 		}
 		catch (IllegalStateException e)
 		{
@@ -38,6 +41,7 @@ public class Investigator extends Taxpayer
 		try
 		{
 			residence.addInvestigator(this);
+			gloryKills = new ArrayList<Denunciation>();
 		}
 		catch (IllegalStateException e)
 		{
@@ -46,6 +50,11 @@ public class Investigator extends Taxpayer
 
 	}
 
+	public void addDenunciation(Denunciation d)
+	{
+		gloryKills.add(d); //TODO sanitize
+	}
+	
 	public String toString()
 	{
 		return "Investigator -- "+name+" ("+residence+")";

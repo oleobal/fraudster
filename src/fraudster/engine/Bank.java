@@ -42,6 +42,16 @@ public class Bank extends Company
 			hostedAccounts.add(a);
 	}
 
+	public ArrayList<BankAccount> getAccounts()
+	{
+		ArrayList<BankAccount> buffer = new ArrayList<BankAccount>();
+		for (BankAccount i : hostedAccounts)
+		{
+			buffer.add(i);
+		}
+		return buffer;
+	}
+	
 	public String toString()
 	{
 		return "Bank -- "+name+" ("+residence+")";
