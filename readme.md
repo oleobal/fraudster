@@ -4,4 +4,6 @@ A mock-up for a game expanded from a school project. Essentially does two things
 
 - Try to imitate an old-timey terminal to see whether messing with the interface is worthwhile for the ambiance. I have found games toying with the interface (such as *Uplink* or *Papers, Please*) very interesting, and I wanted to try it for myself.
 
+*Uplink* showed really well how a game could use interface, sounds and story to compensate for a weaker gameplay ; it's almost a mood piece, actually. One remembers the ambiance in this game, not the gameplay or the plot.
+
 ![Screenshot](screenshot.png)
